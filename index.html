@@ -5,364 +5,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard System</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f6f9; height: 100vh; overflow: hidden; }
 
-    body {
-      background-color: #f4f6f9;
-      height: 100vh;
-      overflow: hidden;
-    }
+    /* LOGIN STYLES */
+    .login-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #0099e5, #005691); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+    .login-card { background: #ffffff; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 380px; text-align: center; }
+    .login-card h2 { color: #0099e5; margin-bottom: 8px; }
+    .login-card p { color: #666; font-size: 14px; margin-bottom: 25px; }
 
-    /* --- STYLES HALAMAN LOGIN --- */
-    .login-wrapper {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(135deg, #0099e5, #005691);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
+    .input-group { margin-bottom: 18px; text-align: left; }
+    .input-group label { display: block; font-size: 13px; font-weight: bold; color: #333; margin-bottom: 6px; }
+    .input-group input, .input-group select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; outline: none; font-size: 14px; transition: border-color 0.3s; background: #fff; }
+    .input-group input:focus, .input-group select:focus { border-color: #0099e5; }
 
-    .login-card {
-      background: #ffffff;
-      padding: 40px 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      width: 100%;
-      max-width: 380px;
-      text-align: center;
-    }
+    .btn-action { padding: 12px 20px; background: #0099e5; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; transition: background 0.3s ease; }
+    .btn-action:hover { background: #0077b5; }
+    .btn-login { width: 100%; margin-top: 10px; }
+    .error-msg { color: #e74c3c; font-size: 13px; margin-top: 15px; display: none; }
 
-    .login-card h2 {
-      color: #0099e5;
-      margin-bottom: 8px;
-    }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .login-card p {
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 25px;
-    }
-
-    .input-group {
-      margin-bottom: 18px;
-      text-align: left;
-    }
-
-    .input-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 6px;
-    }
-
-    .input-group input {
-      width: 100%;
-      padding: 12px 15px;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      outline: none;
-      font-size: 14px;
-      transition: border-color 0.3s;
-    }
-
-    .input-group input:focus {
-      border-color: #0099e5;
-    }
-
-    .btn-action {
-      padding: 12px 20px;
-      background: #0099e5;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .btn-action:hover {
-      background: #0077b5;
-    }
-
-    .btn-login {
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .error-msg {
-      color: #e74c3c;
-      font-size: 13px;
-      margin-top: 15px;
-      display: none;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* --- STYLES DASHBOARD --- */
-    .app-container {
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-    }
-
-    .sidebar {
-      width: 280px;
-      background-color: #0099e5;
-      color: #fff;
-      padding: 20px 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 10;
-      overflow-y: auto;
-    }
-
-    .profile-card {
-      background: #ffffff;
-      color: #0099e5;
-      border-radius: 25px;
-      padding: 10px 15px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 5px;
-    }
-
-    .avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background-color: #0099e5;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: bold;
-      border: 2px solid #0099e5;
-      text-transform: uppercase;
-    }
-
+    /* DASHBOARD STYLES */
+    .app-container { display: flex; height: 100vh; width: 100vw; }
+    .sidebar { width: 280px; background-color: #0099e5; color: #fff; padding: 20px 15px; display: flex; flex-direction: column; gap: 12px; z-index: 10; overflow-y: auto; }
+    .profile-card { background: #ffffff; color: #0099e5; border-radius: 25px; padding: 10px 15px; display: flex; align-items: center; gap: 12px; margin-bottom: 5px; }
+    .avatar { width: 45px; height: 45px; border-radius: 50%; background-color: #0099e5; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; border: 2px solid #0099e5; text-transform: uppercase; }
     .profile-info { flex: 1; }
-    .profile-info .name {
-      font-weight: bold;
-      font-size: 14px;
-      color: #0099e5;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 140px;
-    }
-
-    .profile-info .role {
-      font-size: 11px;
-      color: #666;
-      text-transform: capitalize;
-    }
-
-    .btn-logout {
-      background: #ff4d4d;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: auto;
-    }
-
+    .profile-info .name { font-weight: bold; font-size: 14px; color: #0099e5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+    .profile-info .role { font-size: 11px; color: #666; text-transform: capitalize; }
+    .btn-logout { background: #ff4d4d; color: white; border: none; padding: 10px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: auto; }
     .btn-logout:hover { background: #cc0000; }
 
-    .menu-card {
-      background: #ffffff;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .menu-btn {
-      width: 100%;
-      background: #ffffff;
-      color: #0099e5;
-      border: none;
-      padding: 14px 20px;
-      font-weight: bold;
-      font-size: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-    }
-
-    .toggle-icon {
-      width: 38px;
-      height: 20px;
-      background: #e0e0e0;
-      border-radius: 12px;
-      position: relative;
-      transition: background-color 0.3s ease;
-    }
-
-    .toggle-icon::after {
-      content: '';
-      position: absolute;
-      left: 3px;
-      top: 3px;
-      width: 14px;
-      height: 14px;
-      background: #fff;
-      border-radius: 50%;
-      transition: transform 0.3s ease;
-    }
-
+    .menu-card { background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); }
+    .menu-btn { width: 100%; background: #ffffff; color: #0099e5; border: none; padding: 14px 20px; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .toggle-icon { width: 38px; height: 20px; background: #e0e0e0; border-radius: 12px; position: relative; transition: background-color 0.3s ease; }
+    .toggle-icon::after { content: ''; position: absolute; left: 3px; top: 3px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: transform 0.3s ease; }
     .menu-card.open .toggle-icon { background-color: #0099e5; }
     .menu-card.open .toggle-icon::after { transform: translateX(18px); }
 
-    .submenu-wrapper {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-height 0.35s ease-in-out, opacity 0.3s ease;
-    }
-
-    .menu-card.open .submenu-wrapper {
-      max-height: 350px;
-      opacity: 1;
-    }
-
-    .submenu {
-      padding: 5px 15px 15px 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .submenu a {
-      color: #0099e5;
-      text-decoration: none;
-      font-size: 13.5px;
-      font-weight: 600;
-      padding: 8px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
+    .submenu-wrapper { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.35s ease-in-out, opacity 0.3s ease; }
+    .menu-card.open .submenu-wrapper { max-height: 350px; opacity: 1; }
+    .submenu { padding: 5px 15px 15px 15px; display: flex; flex-direction: column; gap: 6px; }
+    .submenu a { color: #0099e5; text-decoration: none; font-size: 13.5px; font-weight: 600; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
     .submenu a:hover { background-color: #e6f5fc; }
 
-    .main-container {
-      flex: 1;
-      padding: 25px 35px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .tabs-header {
-      display: flex;
-      gap: 12px;
-      padding-left: 15px;
-      min-height: 38px;
-    }
-
-    .tab-btn {
-      background-color: #0099e5;
-      color: #fff;
-      border: none;
-      padding: 10px 25px;
-      border-top-left-radius: 15px;
-      border-top-right-radius: 15px;
-      font-weight: bold;
-      font-size: 14px;
-      cursor: pointer;
-      opacity: 0.6;
-    }
-
+    .main-container { flex: 1; padding: 25px 35px; display: flex; flex-direction: column; overflow: hidden; }
+    .tabs-header { display: flex; gap: 12px; padding-left: 15px; min-height: 38px; }
+    .tab-btn { background-color: #0099e5; color: #fff; border: none; padding: 10px 25px; border-top-left-radius: 15px; border-top-right-radius: 15px; font-weight: bold; font-size: 14px; cursor: pointer; opacity: 0.6; }
     .tab-btn.active { opacity: 1; }
 
-    .content-box {
-      flex: 1;
-      border: 3px solid #0099e5;
-      border-radius: 20px;
-      background-color: #fff;
-      padding: 25px;
-      overflow-y: auto;
-    }
-
+    .content-box { flex: 1; border: 3px solid #0099e5; border-radius: 20px; background-color: #fff; padding: 25px; overflow-y: auto; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    .form-container {
-      max-width: 500px;
-      background: #f9fafb;
-      padding: 20px 25px;
-      border-radius: 15px;
-      border: 1px solid #e5e7eb;
-      margin-top: 15px;
-    }
-
-    .alert {
-      padding: 10px 15px;
-      border-radius: 8px;
-      font-size: 13.5px;
-      margin-bottom: 15px;
-      display: none;
-    }
-
+    .form-container { max-width: 500px; background: #f9fafb; padding: 20px 25px; border-radius: 15px; border: 1px solid #e5e7eb; margin-top: 15px; }
+    .alert { padding: 10px 15px; border-radius: 8px; font-size: 13.5px; margin-bottom: 15px; display: none; }
     .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
     .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
   </style>
 </head>
 <body>
 
-  <!-- ================= HALAMAN LOGIN ================= -->
+  <!-- HALAMAN LOGIN -->
   <div class="login-wrapper" id="loginPage">
     <div class="login-card">
       <h2>Selamat Datang</h2>
       <p>Silakan masuk dengan akun Anda</p>
-      
       <div class="input-group">
         <label>Username</label>
         <input type="text" id="username" placeholder="Masukkan Username" />
       </div>
-
       <div class="input-group">
         <label>Password</label>
         <input type="password" id="password" placeholder="Masukkan Password" />
       </div>
-
       <button class="btn-action btn-login" id="btnLogin" onclick="processLogin()">Masuk</button>
       <div class="error-msg" id="errorMsg">Username atau Password salah!</div>
     </div>
   </div>
 
-  <!-- ================= APP DASHBOARD UTAMA ================= -->
+  <!-- DASHBOARD UTAMA -->
   <div class="app-container" id="appDashboard" style="display: none;">
-    
-    <!-- Sidebar -->
     <div class="sidebar">
       <div class="profile-card">
         <div class="avatar" id="userAvatar">A</div>
@@ -372,89 +97,59 @@
         </div>
       </div>
 
-      <!-- Home Menu -->
       <div class="menu-card open" id="group-home">
-        <button class="menu-btn" onclick="selectMainMenu('home')">
-          Home <span class="toggle-icon"></span>
-        </button>
-        <div class="submenu-wrapper">
-          <div class="submenu">
-            <a onclick="switchTab('home', 'dashboard')">Dashboard</a>
-            <a onclick="switchTab('home', 'pekerjaan-pending')">Pekerjaan Pending</a>
-            <a onclick="switchTab('home', 'rekap-material')">Rekap Material</a>
-            <a onclick="switchTab('home', 'anggota')">Anggota</a>
-          </div>
-        </div>
+        <button class="menu-btn" onclick="selectMainMenu('home')">Home <span class="toggle-icon"></span></button>
+        <div class="submenu-wrapper"><div class="submenu">
+          <a onclick="switchTab('home', 'dashboard')">Dashboard</a>
+          <a onclick="switchTab('home', 'pekerjaan-pending')">Pekerjaan Pending</a>
+          <a onclick="switchTab('home', 'rekap-material')">Rekap Material</a>
+          <a onclick="switchTab('home', 'anggota')">Anggota</a>
+        </div></div>
       </div>
 
-      <!-- Pekerjaan Menu -->
       <div class="menu-card" id="group-pekerjaan">
-        <button class="menu-btn" onclick="selectMainMenu('pekerjaan')">
-          Pekerjaan <span class="toggle-icon"></span>
-        </button>
-        <div class="submenu-wrapper">
-          <div class="submenu">
-            <a onclick="switchTab('pekerjaan', 'proyek-aktif')">Proyek Aktif</a>
-            <a onclick="switchTab('pekerjaan', 'jadwal-pekerjaan')">Jadwal Pekerjaan</a>
-            <a onclick="switchTab('pekerjaan', 'riwayat-proyek')">Riwayat Proyek</a>
-          </div>
-        </div>
+        <button class="menu-btn" onclick="selectMainMenu('pekerjaan')">Pekerjaan <span class="toggle-icon"></span></button>
+        <div class="submenu-wrapper"><div class="submenu">
+          <a onclick="switchTab('pekerjaan', 'proyek-aktif')">Proyek Aktif</a>
+          <a onclick="switchTab('pekerjaan', 'jadwal-pekerjaan')">Jadwal Pekerjaan</a>
+          <a onclick="switchTab('pekerjaan', 'riwayat-proyek')">Riwayat Proyek</a>
+        </div></div>
       </div>
 
-      <!-- Inventory Menu -->
       <div class="menu-card" id="group-inventory">
-        <button class="menu-btn" onclick="selectMainMenu('inventory')">
-          Inventory <span class="toggle-icon"></span>
-        </button>
-        <div class="submenu-wrapper">
-          <div class="submenu">
-            <a onclick="switchTab('inventory', 'stok-barang')">Stok Barang</a>
-            <a onclick="switchTab('inventory', 'pembelian-material')">Pembelian Material</a>
-            <a onclick="switchTab('inventory', 'alat-kerja')">Daftar Alat Kerja</a>
-          </div>
-        </div>
+        <button class="menu-btn" onclick="selectMainMenu('inventory')">Inventory <span class="toggle-icon"></span></button>
+        <div class="submenu-wrapper"><div class="submenu">
+          <a onclick="switchTab('inventory', 'stok-barang')">Stok Barang</a>
+          <a onclick="switchTab('inventory', 'pembelian-material')">Pembelian Material</a>
+          <a onclick="switchTab('inventory', 'alat-kerja')">Daftar Alat Kerja</a>
+        </div></div>
       </div>
 
-      <!-- Arsip Menu -->
       <div class="menu-card role-admin-only" id="group-arsip">
-        <button class="menu-btn" onclick="selectMainMenu('arsip')">
-          Arsip <span class="toggle-icon"></span>
-        </button>
-        <div class="submenu-wrapper">
-          <div class="submenu">
-            <a onclick="switchTab('arsip', 'dokumen-laporan')">Laporan Bulanan</a>
-            <a onclick="switchTab('arsip', 'arsip-kontrak')">Arsip Kontrak</a>
-          </div>
-        </div>
+        <button class="menu-btn" onclick="selectMainMenu('arsip')">Arsip <span class="toggle-icon"></span></button>
+        <div class="submenu-wrapper"><div class="submenu">
+          <a onclick="switchTab('arsip', 'dokumen-laporan')">Laporan Bulanan</a>
+          <a onclick="switchTab('arsip', 'arsip-kontrak')">Arsip Kontrak</a>
+        </div></div>
       </div>
 
-      <!-- Pengaturan Menu -->
       <div class="menu-card" id="group-pengaturan">
-        <button class="menu-btn" onclick="selectMainMenu('pengaturan')">
-          Pengaturan <span class="toggle-icon"></span>
-        </button>
-        <div class="submenu-wrapper">
-          <div class="submenu">
-            <a onclick="switchTab('pengaturan', 'profil-saya')">Profil Saya</a>
-            <a onclick="switchTab('pengaturan', 'ganti-password')">Ganti Password</a>
-          </div>
-        </div>
+        <button class="menu-btn" onclick="selectMainMenu('pengaturan')">Pengaturan <span class="toggle-icon"></span></button>
+        <div class="submenu-wrapper"><div class="submenu">
+          <a onclick="switchTab('pengaturan', 'profil-saya')">Profil Saya</a>
+          <a onclick="switchTab('pengaturan', 'ganti-password')">Ganti Password</a>
+          <a class="role-admin-only" onclick="switchTab('pengaturan', 'tambah-anggota')">Tambah Anggota</a>
+        </div></div>
       </div>
 
       <button class="btn-logout" onclick="logout()">Keluar (Logout)</button>
     </div>
 
-    <!-- Main Content Area -->
     <div class="main-container">
       <div class="tabs-header" id="dynamic-tabs"></div>
 
       <div class="content-box">
-        <!-- TAB CONTENTS -->
-        <div id="tab-dashboard" class="tab-content">
-          <h2 style="color: #0099e5; margin-bottom: 5px;">Dashboard Utama</h2>
-          <p style="color: #666;">Selamat datang di panel sistem operasional.</p>
-        </div>
-
+        <div id="tab-dashboard" class="tab-content"><h2 style="color: #0099e5;">Dashboard Utama</h2><p style="color: #666;">Selamat datang di panel sistem operasional.</p></div>
         <div id="tab-pekerjaan-pending" class="tab-content"><h2>Pekerjaan Pending</h2></div>
         <div id="tab-rekap-material" class="tab-content"><h2>Rekap Material</h2></div>
         <div id="tab-anggota" class="tab-content"><h2>Daftar Anggota</h2></div>
@@ -467,53 +162,56 @@
         <div id="tab-dokumen-laporan" class="tab-content"><h2>Laporan Bulanan</h2></div>
         <div id="tab-arsip-kontrak" class="tab-content"><h2>Arsip Kontrak</h2></div>
 
-        <!-- TAB PENGATURAN: PROFIL SAYA -->
+        <!-- TAB PROFIL SAYA -->
         <div id="tab-profil-saya" class="tab-content">
           <h2 style="color: #0099e5;">Profil Saya</h2>
-          <p style="color: #666; font-size: 14px;">Perbarui nama lengkap dan username Anda di bawah ini.</p>
-          
           <div class="form-container">
             <div id="profileAlert" class="alert"></div>
-
-            <div class="input-group">
-              <label>Nama Lengkap</label>
-              <input type="text" id="editNamaLengkap" placeholder="Nama Lengkap" />
-            </div>
-
-            <div class="input-group">
-              <label>Username</label>
-              <input type="text" id="editUsername" placeholder="Username Baru" />
-            </div>
-
+            <div class="input-group"><label>Nama Lengkap</label><input type="text" id="editNamaLengkap" /></div>
+            <div class="input-group"><label>Username</label><input type="text" id="editUsername" /></div>
             <button class="btn-action" id="btnSaveProfile" onclick="saveProfile()">Simpan Perubahan</button>
           </div>
         </div>
 
-        <!-- TAB PENGATURAN: GANTI PASSWORD -->
+        <!-- TAB GANTI PASSWORD -->
         <div id="tab-ganti-password" class="tab-content">
           <h2 style="color: #0099e5;">Ganti Password</h2>
-          <p style="color: #666; font-size: 14px;">Perbarui kata sandi akun Anda untuk keamanan.</p>
-
           <div class="form-container">
             <div id="passAlert" class="alert"></div>
-
-            <div class="input-group">
-              <label>Password Saat Ini</label>
-              <input type="password" id="oldPassword" placeholder="Masukkan Password Lama" />
-            </div>
-
-            <div class="input-group">
-              <label>Password Baru</label>
-              <input type="password" id="newPassword" placeholder="Masukkan Password Baru" />
-            </div>
-
-            <div class="input-group">
-              <label>Konfirmasi Password Baru</label>
-
-              <input type="password" id="confirmPassword" placeholder="Ulangi Password Baru" />
-            </div>
-
+            <div class="input-group"><label>Password Saat Ini</label><input type="password" id="oldPassword" /></div>
+            <div class="input-group"><label>Password Baru</label><input type="password" id="newPassword" /></div>
+            <div class="input-group"><label>Konfirmasi Password Baru</label><input type="password" id="confirmPassword" /></div>
             <button class="btn-action" id="btnSavePassword" onclick="savePassword()">Ubah Password</button>
+          </div>
+        </div>
+
+        <!-- TAB TAMBAH ANGGOTA (KHUSUS ADMIN) -->
+        <div id="tab-tambah-anggota" class="tab-content">
+          <h2 style="color: #0099e5;">Tambah Anggota Baru</h2>
+          <p style="color: #666; font-size: 14px;">Fitur khusus Admin untuk menambahkan pengguna baru ke sistem.</p>
+          <div class="form-container">
+            <div id="addUserAlert" class="alert"></div>
+            <div class="input-group">
+              <label>Nama Lengkap</label>
+              <input type="text" id="addNama" placeholder="Masukkan Nama Lengkap" />
+            </div>
+            <div class="input-group">
+              <label>Username</label>
+              <input type="text" id="addUsername" placeholder="Masukkan Username" />
+            </div>
+            <div class="input-group">
+              <label>Password</label>
+              <input type="password" id="addPassword" placeholder="Masukkan Password" />
+            </div>
+            <div class="input-group">
+              <label>Role / Peran</label>
+              <select id="addRole">
+                <option value="daily worker">Daily Worker</option>
+                <option value="engineering staff">Engineering Staff</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <button class="btn-action" id="btnAddUser" onclick="saveNewUser()">Tambah Anggota</button>
           </div>
         </div>
 
@@ -522,15 +220,14 @@
   </div>
 
   <script>
-    // MASUKKAN WEB APP URL GOOGLE APPS SCRIPT ANDA DI SINI
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6hx67eWNTlFfN7_q4unVGmL3d5F34exY0Z6LLKMGXWm7I894PQRIYknLHEKA8yt-w/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwm4S1dLMsjNGJbCgARoFzEqxSYjxCom-5HWxLQHXKj2tfOM-zcLW0EYb0-BGO_qGF9/exec";
 
     const menuStructure = {
       home: { title: "Home", items: [ { id: "dashboard", label: "Dashboard" }, { id: "pekerjaan-pending", label: "Pekerjaan Pending" }, { id: "rekap-material", label: "Rekap Material" }, { id: "anggota", label: "Anggota" } ] },
       pekerjaan: { title: "Pekerjaan", items: [ { id: "proyek-aktif", label: "Proyek Aktif" }, { id: "jadwal-pekerjaan", label: "Jadwal Pekerjaan" }, { id: "riwayat-proyek", label: "Riwayat Proyek" } ] },
       inventory: { title: "Inventory", items: [ { id: "stok-barang", label: "Stok Barang" }, { id: "pembelian-material", label: "Pembelian Material" }, { id: "alat-kerja", label: "Daftar Alat Kerja" } ] },
       arsip: { title: "Arsip", items: [ { id: "dokumen-laporan", label: "Laporan Bulanan" }, { id: "arsip-kontrak", label: "Arsip Kontrak" } ] },
-      pengaturan: { title: "Pengaturan", items: [ { id: "profil-saya", label: "Profil Saya" }, { id: "ganti-password", label: "Ganti Password" } ] }
+      pengaturan: { title: "Pengaturan", items: [ { id: "profil-saya", label: "Profil Saya" }, { id: "ganti-password", label: "Ganti Password" }, { id: "tambah-anggota", label: "Tambah Anggota", adminOnly: true } ] }
     };
 
     let currentMenuKey = "home";
@@ -584,12 +281,11 @@
 
       updateProfileUI();
 
-      const arsipMenu = document.querySelector(".role-admin-only");
-      if (user.role !== "admin") {
-        if (arsipMenu) arsipMenu.style.display = "none";
-      } else {
-        if (arsipMenu) arsipMenu.style.display = "block";
-      }
+      // Sembunyikan elemen khusus admin untuk non-admin
+      const adminElements = document.querySelectorAll(".role-admin-only");
+      adminElements.forEach(el => {
+        el.style.display = (user.role === "admin") ? "block" : "none";
+      });
 
       selectMainMenu("home");
     }
@@ -598,12 +294,54 @@
       document.getElementById("userNameDisplay").innerText = currentUser.nama;
       document.getElementById("userRoleDisplay").innerText = currentUser.role;
       document.getElementById("userAvatar").innerText = currentUser.nama.charAt(0);
-      
       document.getElementById("editNamaLengkap").value = currentUser.nama;
       document.getElementById("editUsername").value = currentUser.username;
     }
 
-    // SIMPAN PERUBAHAN PROFIL (NAMA & USERNAME)
+    // FUNGSI SIMPAN ANGGOTA BARU (KHUSUS ADMIN)
+    async function saveNewUser() {
+      const nama = document.getElementById("addNama").value.trim();
+      const username = document.getElementById("addUsername").value.trim();
+      const password = document.getElementById("addPassword").value.trim();
+      const role = document.getElementById("addRole").value;
+      const alertBox = document.getElementById("addUserAlert");
+      const btn = document.getElementById("btnAddUser");
+
+      if (!nama || !username || !password) {
+        showAlert(alertBox, "Harap isi semua kolom!", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Menambahkan...`;
+
+      try {
+        const formData = new URLSearchParams();
+        formData.append("action", "addUser");
+        formData.append("nama", nama);
+        formData.append("username", username);
+        formData.append("password", password);
+        formData.append("role", role);
+
+        const response = await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: formData });
+        const res = await response.json();
+
+        if (res.status === "success") {
+          showAlert(alertBox, res.message, "success");
+          document.getElementById("addNama").value = "";
+          document.getElementById("addUsername").value = "";
+          document.getElementById("addPassword").value = "";
+        } else {
+          showAlert(alertBox, res.message || "Gagal menambah anggota.", "error");
+        }
+      } catch (err) {
+        showAlert(alertBox, "Terjadi kesalahan koneksi.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Tambah Anggota";
+      }
+    }
+
     async function saveProfile() {
       const newNama = document.getElementById("editNamaLengkap").value.trim();
       const newUsername = document.getElementById("editUsername").value.trim();
@@ -619,25 +357,21 @@
       btn.innerHTML = `<span class="spinner"></span> Menyimpan...`;
 
       try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "updateProfile",
-            oldUsername: currentUser.username,
-            newUsername: newUsername,
-            newNama: newNama
-          })
-        });
+        const formData = new URLSearchParams();
+        formData.append("action", "updateProfile");
+        formData.append("oldUsername", currentUser.username);
+        formData.append("newUsername", newUsername);
+        formData.append("newNama", newNama);
 
+        const response = await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: formData });
         const res = await response.json();
 
         if (res.status === "success") {
           currentUser.nama = res.newNama;
           currentUser.username = res.newUsername;
           localStorage.setItem("user_session", JSON.stringify(currentUser));
-          
           updateProfileUI();
-          showAlert(alertBox, "Profil berhasil disimpan ke Google Sheets!", "success");
+          showAlert(alertBox, "Profil berhasil disimpan!", "success");
         } else {
           showAlert(alertBox, res.message || "Gagal memperbarui profil.", "error");
         }
@@ -649,7 +383,6 @@
       }
     }
 
-    // SIMPAN PERUBAHAN PASSWORD
     async function savePassword() {
       const oldPassword = document.getElementById("oldPassword").value.trim();
       const newPassword = document.getElementById("newPassword").value.trim();
@@ -671,16 +404,13 @@
       btn.innerHTML = `<span class="spinner"></span> Memproses...`;
 
       try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "changePassword",
-            username: currentUser.username,
-            oldPassword: oldPassword,
-            newPassword: newPassword
-          })
-        });
+        const formData = new URLSearchParams();
+        formData.append("action", "changePassword");
+        formData.append("username", currentUser.username);
+        formData.append("oldPassword", oldPassword);
+        formData.append("newPassword", newPassword);
 
+        const response = await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: formData });
         const res = await response.json();
 
         if (res.status === "success") {
@@ -721,8 +451,8 @@
       if (activeCard) activeCard.classList.add('open');
 
       renderHeaderTabs(menuKey);
-      const defaultSubTabId = menuStructure[menuKey].items[0].id;
-      switchTab(menuKey, defaultSubTabId);
+      const defaultSubTab = menuStructure[menuKey].items.find(i => !i.adminOnly || (currentUser && currentUser.role === 'admin'));
+      if (defaultSubTab) switchTab(menuKey, defaultSubTab.id);
     }
 
     function renderHeaderTabs(menuKey) {
@@ -731,6 +461,7 @@
 
       const items = menuStructure[menuKey].items;
       items.forEach(item => {
+        if (item.adminOnly && currentUser && currentUser.role !== 'admin') return;
         const btn = document.createElement('button');
         btn.className = 'tab-btn';
         btn.id = 'btn-' + item.id;
