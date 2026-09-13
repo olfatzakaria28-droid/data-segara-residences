@@ -28,6 +28,7 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
+      z-index: 10;
     }
 
     .profile-card {
@@ -39,6 +40,12 @@
       align-items: center;
       gap: 12px;
       margin-bottom: 15px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     .avatar {
@@ -53,6 +60,11 @@
       font-size: 24px;
       font-weight: bold;
       border: 2px solid #0099e5;
+      transition: transform 0.3s ease;
+    }
+
+    .profile-card:hover .avatar {
+      transform: scale(1.05);
     }
 
     .profile-info .name {
@@ -68,7 +80,6 @@
     .menu-group {
       display: flex;
       flex-direction: column;
-      gap: 10px;
     }
 
     .menu-btn {
@@ -84,35 +95,68 @@
       align-items: center;
       cursor: pointer;
       text-align: left;
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+      z-index: 2;
     }
 
+    .menu-btn:hover {
+      transform: translateX(4px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Toggle Switch Style & Animation */
     .toggle-icon {
-      width: 30px;
-      height: 16px;
-      background: #0099e5;
+      width: 32px;
+      height: 18px;
+      background: #ccc;
       border-radius: 10px;
       position: relative;
+      transition: background-color 0.3s ease;
     }
 
     .toggle-icon::after {
       content: '';
       position: absolute;
-      right: 2px;
-      top: 2px;
+      left: 3px;
+      top: 3px;
       width: 12px;
       height: 12px;
       background: #fff;
       border-radius: 50%;
+      transition: transform 0.3s ease;
     }
 
+    /* Active Accordion State */
+    .menu-group.open .toggle-icon {
+      background-color: #0099e5;
+    }
+
+    .menu-group.open .toggle-icon::after {
+      transform: translateX(14px);
+    }
+
+    /* Submenu Accordion Animation */
     .submenu {
       background: #ffffff;
-      border-radius: 10px;
-      padding: 10px 15px;
-      margin-top: -5px;
+      border-radius: 0 0 15px 15px;
+      padding: 0 15px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      margin-top: -10px;
+      padding-top: 10px;
+      transition: max-height 0.4s cubic-bezier(0, 1, 0, 1), opacity 0.3s ease, padding 0.3s ease;
+    }
+
+    .menu-group.open .submenu {
+      max-height: 200px; /* Nilai cukup besar untuk menampung submenu */
+      opacity: 1;
+      padding-bottom: 12px;
+      padding-top: 15px;
+      transition: max-height 0.4s ease-in-out, opacity 0.3s ease 0.1s, padding 0.3s ease;
     }
 
     .submenu a {
@@ -120,12 +164,15 @@
       text-decoration: none;
       font-size: 13px;
       font-weight: 600;
-      padding: 4px 0;
+      padding: 6px 8px;
+      border-radius: 6px;
       cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.2s ease;
     }
 
     .submenu a:hover {
-      text-decoration: underline;
+      background-color: #e6f5fc;
+      transform: translateX(4px);
     }
 
     /* Main Content Area */
@@ -136,7 +183,7 @@
       flex-direction: column;
     }
 
-    /* Tabs Header */
+    /* Tabs Header & Animations */
     .tabs-header {
       display: flex;
       gap: 15px;
@@ -153,11 +200,19 @@
       font-weight: bold;
       font-size: 14px;
       cursor: pointer;
-      opacity: 0.9;
+      opacity: 0.6;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .tab-btn:hover {
+      opacity: 0.85;
+      transform: translateY(1px);
     }
 
     .tab-btn.active {
       opacity: 1;
+      transform: translateY(0);
     }
 
     /* Content Box */
@@ -168,17 +223,24 @@
       background-color: #fff;
       padding: 25px;
       overflow-y: auto;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
 
+    /* Content Transition Fade-in & Slide-up */
     .tab-content {
       display: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
     }
 
     .tab-content.active {
       display: block;
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    /* Simple Table Styling inside Content */
+    /* Table Styling */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -195,6 +257,14 @@
       background-color: #0099e5;
       color: white;
     }
+
+    tr {
+      transition: background-color 0.2s ease;
+    }
+
+    tr:hover {
+      background-color: #f0f9ff;
+    }
   </style>
 </head>
 <body>
@@ -209,8 +279,9 @@
       </div>
     </div>
 
-    <div class="menu-group">
-      <button class="menu-btn">
+    <!-- Home Menu (Default Open) -->
+    <div class="menu-group open" id="group-home">
+      <button class="menu-btn" onclick="toggleMenu('group-home')">
         Home
         <span class="toggle-icon"></span>
       </button>
@@ -222,22 +293,22 @@
       </div>
     </div>
 
-    <div class="menu-group">
-      <button class="menu-btn">
+    <div class="menu-group" id="group-pekerjaan">
+      <button class="menu-btn" onclick="toggleMenu('group-pekerjaan')">
         Pekerjaan
         <span class="toggle-icon"></span>
       </button>
     </div>
 
-    <div class="menu-group">
-      <button class="menu-btn">
+    <div class="menu-group" id="group-inventory">
+      <button class="menu-btn" onclick="toggleMenu('group-inventory')">
         Inventory
         <span class="toggle-icon"></span>
       </button>
     </div>
 
-    <div class="menu-group">
-      <button class="menu-btn">
+    <div class="menu-group" id="group-arsip">
+      <button class="menu-btn" onclick="toggleMenu('group-arsip')">
         Arsip
         <span class="toggle-icon"></span>
       </button>
@@ -297,22 +368,34 @@
   </div>
 
   <script>
-    function switchTab(tabId) {
-      // Sembunyikan semua tab content
-      const contents = document.querySelectorAll('.tab-content');
-      contents.forEach(content => content.classList.remove('active'));
+    // Fungsi untuk membuka / menutup submenu (Accordion)
+    function toggleMenu(groupId) {
+      const targetGroup = document.getElementById(groupId);
+      targetGroup.classList.toggle('open');
+    }
 
-      // Deaktifkan semua tombol header tab
+    // Fungsi untuk berpindah Tab dengan Efek Fade Animasi
+    function switchTab(tabId) {
+      const contents = document.querySelectorAll('.tab-content');
       const buttons = document.querySelectorAll('.tab-btn');
+
+      // 1. Sembunyikan semua tab content
+      contents.forEach(content => {
+        content.classList.remove('active');
+      });
+
+      // 2. Nonaktifkan semua button tab
       buttons.forEach(btn => btn.classList.remove('active'));
 
-      // Tampilkan tab yang dipilih
+      // 3. Tampilkan tab yang dipilih setelah sedikit delay agar animasi smooth
       const targetContent = document.getElementById('tab-' + tabId);
       if (targetContent) {
-        targetContent.classList.add('active');
+        setTimeout(() => {
+          targetContent.classList.add('active');
+        }, 50);
       }
 
-      // Aktifkan tombol yang sesuai jika ada
+      // 4. Aktifkan tombol tab terkait
       const targetBtn = document.getElementById('btn-' + tabId);
       if (targetBtn) {
         targetBtn.classList.add('active');
