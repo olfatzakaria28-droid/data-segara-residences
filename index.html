@@ -139,6 +139,7 @@
           <a onclick="switchTab('pengaturan', 'profil-saya')">Profil Saya</a>
           <a onclick="switchTab('pengaturan', 'ganti-password')">Ganti Password</a>
           <a class="role-admin-only" onclick="switchTab('pengaturan', 'tambah-anggota')">Tambah Anggota</a>
+          <a class="role-admin-only" onclick="switchTab('pengaturan', 'konfigurasi-api')">Konfigurasi API</a>
         </div></div>
       </div>
 
@@ -191,18 +192,9 @@
           <p style="color: #666; font-size: 14px;">Fitur khusus Admin untuk menambahkan pengguna baru ke sistem.</p>
           <div class="form-container">
             <div id="addUserAlert" class="alert"></div>
-            <div class="input-group">
-              <label>Nama Lengkap</label>
-              <input type="text" id="addNama" placeholder="Masukkan Nama Lengkap" />
-            </div>
-            <div class="input-group">
-              <label>Username</label>
-              <input type="text" id="addUsername" placeholder="Masukkan Username" />
-            </div>
-            <div class="input-group">
-              <label>Password</label>
-              <input type="password" id="addPassword" placeholder="Masukkan Password" />
-            </div>
+            <div class="input-group"><label>Nama Lengkap</label><input type="text" id="addNama" placeholder="Masukkan Nama Lengkap" /></div>
+            <div class="input-group"><label>Username</label><input type="text" id="addUsername" placeholder="Masukkan Username" /></div>
+            <div class="input-group"><label>Password</label><input type="password" id="addPassword" placeholder="Masukkan Password" /></div>
             <div class="input-group">
               <label>Role / Peran</label>
               <select id="addRole">
@@ -215,19 +207,45 @@
           </div>
         </div>
 
+        <!-- TAB KONFIGURASI API (KHUSUS ADMIN) -->
+        <div id="tab-konfigurasi-api" class="tab-content">
+          <h2 style="color: #0099e5;">Konfigurasi Google Sheets API</h2>
+          <p style="color: #666; font-size: 14px;">Kelola URL Deploy Google Apps Script dan Sandi Akses tanpa mengubah kode aplikasi.</p>
+          <div class="form-container">
+            <div id="apiConfigAlert" class="alert"></div>
+            <div class="input-group">
+              <label>URL Deploy Google Apps Script</label>
+              <input type="text" id="cfgScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" />
+            </div>
+            <div class="input-group">
+              <label>Sandi Akses API (Opsional)</label>
+              <input type="password" id="cfgApiPassword" placeholder="Masukkan Sandi API (Jika ada)" />
+            </div>
+            <button class="btn-action" id="btnSaveApiConfig" onclick="saveApiSettings()">Simpan Pengaturan API</button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwm4S1dLMsjNGJbCgARoFzEqxSYjxCom-5HWxLQHXKj2tfOM-zcLW0EYb0-BGO_qGF9/exec";
+    const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycb.../exec";
+
+    function getScriptUrl() {
+      return localStorage.getItem("cfg_script_url") || DEFAULT_SCRIPT_URL;
+    }
+
+    function getApiPassword() {
+      return localStorage.getItem("cfg_api_password") || "";
+    }
 
     const menuStructure = {
       home: { title: "Home", items: [ { id: "dashboard", label: "Dashboard" }, { id: "pekerjaan-pending", label: "Pekerjaan Pending" }, { id: "rekap-material", label: "Rekap Material" }, { id: "anggota", label: "Anggota" } ] },
       pekerjaan: { title: "Pekerjaan", items: [ { id: "proyek-aktif", label: "Proyek Aktif" }, { id: "jadwal-pekerjaan", label: "Jadwal Pekerjaan" }, { id: "riwayat-proyek", label: "Riwayat Proyek" } ] },
       inventory: { title: "Inventory", items: [ { id: "stok-barang", label: "Stok Barang" }, { id: "pembelian-material", label: "Pembelian Material" }, { id: "alat-kerja", label: "Daftar Alat Kerja" } ] },
       arsip: { title: "Arsip", items: [ { id: "dokumen-laporan", label: "Laporan Bulanan" }, { id: "arsip-kontrak", label: "Arsip Kontrak" } ] },
-      pengaturan: { title: "Pengaturan", items: [ { id: "profil-saya", label: "Profil Saya" }, { id: "ganti-password", label: "Ganti Password" }, { id: "tambah-anggota", label: "Tambah Anggota", adminOnly: true } ] }
+      pengaturan: { title: "Pengaturan", items: [ { id: "profil-saya", label: "Profil Saya" }, { id: "ganti-password", label: "Ganti Password" }, { id: "tambah-anggota", label: "Tambah Anggota", adminOnly: true }, { id: "konfigurasi-api", label: "Konfigurasi API", adminOnly: true } ] }
     };
 
     let currentMenuKey = "home";
@@ -250,7 +268,8 @@
       err.style.display = "none";
 
       try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?username=${encodeURIComponent(uInput)}&password=${encodeURIComponent(pInput)}`);
+        const url = `${getScriptUrl()}?username=${encodeURIComponent(uInput)}&password=${encodeURIComponent(pInput)}&api_password=${encodeURIComponent(getApiPassword())}`;
+        const response = await fetch(url);
         const result = await response.json();
 
         if (result.status === "success") {
@@ -266,7 +285,7 @@
           err.style.display = "block";
         }
       } catch (e) {
-        err.innerText = "Gagal terhubung ke Google Sheets!";
+        err.innerText = "Gagal terhubung ke Google Sheets API!";
         err.style.display = "block";
       } finally {
         btn.disabled = false;
@@ -281,7 +300,6 @@
 
       updateProfileUI();
 
-      // Sembunyikan elemen khusus admin untuk non-admin
       const adminElements = document.querySelectorAll(".role-admin-only");
       adminElements.forEach(el => {
         el.style.display = (user.role === "admin") ? "block" : "none";
@@ -296,9 +314,26 @@
       document.getElementById("userAvatar").innerText = currentUser.nama.charAt(0);
       document.getElementById("editNamaLengkap").value = currentUser.nama;
       document.getElementById("editUsername").value = currentUser.username;
+      
+      document.getElementById("cfgScriptUrl").value = getScriptUrl();
+      document.getElementById("cfgApiPassword").value = getApiPassword();
     }
 
-    // FUNGSI SIMPAN ANGGOTA BARU (KHUSUS ADMIN)
+    function saveApiSettings() {
+      const urlInput = document.getElementById("cfgScriptUrl").value.trim();
+      const passInput = document.getElementById("cfgApiPassword").value.trim();
+      const alertBox = document.getElementById("apiConfigAlert");
+
+      if (!urlInput) {
+        showAlert(alertBox, "URL Google Apps Script tidak boleh kosong!", "error");
+        return;
+      }
+
+      localStorage.setItem("cfg_script_url", urlInput);
+      localStorage.setItem("cfg_api_password", passInput);
+      showAlert(alertBox, "Konfigurasi API berhasil disimpan!", "success");
+    }
+
     async function saveNewUser() {
       const nama = document.getElementById("addNama").value.trim();
       const username = document.getElementById("addUsername").value.trim();
@@ -322,8 +357,9 @@
         formData.append("username", username);
         formData.append("password", password);
         formData.append("role", role);
+        formData.append("api_password", getApiPassword());
 
-        const response = await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: formData });
+        const response = await fetch(getScriptUrl(), { method: "POST", body: formData });
         const res = await response.json();
 
         if (res.status === "success") {
@@ -362,8 +398,9 @@
         formData.append("oldUsername", currentUser.username);
         formData.append("newUsername", newUsername);
         formData.append("newNama", newNama);
+        formData.append("api_password", getApiPassword());
 
-        const response = await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: formData });
+        const response = await fetch(getScriptUrl(), { method: "POST", body: formData });
         const res = await response.json();
 
         if (res.status === "success") {
@@ -409,8 +446,9 @@
         formData.append("username", currentUser.username);
         formData.append("oldPassword", oldPassword);
         formData.append("newPassword", newPassword);
+        formData.append("api_password", getApiPassword());
 
-        const response = await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: formData });
+        const response = await fetch(getScriptUrl(), { method: "POST", body: formData });
         const res = await response.json();
 
         if (res.status === "success") {
