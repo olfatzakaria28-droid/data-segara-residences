@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Admin</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background-color: #f4f6f9;
+      overflow: hidden;
+    }
+
+    /* Sidebar Style */
+    .sidebar {
+      width: 280px;
+      background-color: #0099e5;
+      color: #fff;
+      padding: 20px 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .profile-card {
+      background: #ffffff;
+      color: #0099e5;
+      border-radius: 25px;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: #0099e5;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      border: 2px solid #0099e5;
+    }
+
+    .profile-info .name {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .profile-info .role {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .menu-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .menu-btn {
+      background: #ffffff;
+      color: #0099e5;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .toggle-icon {
+      width: 30px;
+      height: 16px;
+      background: #0099e5;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .toggle-icon::after {
+      content: '';
+      position: absolute;
+      right: 2px;
+      top: 2px;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    .submenu {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 10px 15px;
+      margin-top: -5px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .submenu a {
+      color: #0099e5;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 0;
+      cursor: pointer;
+    }
+
+    .submenu a:hover {
+      text-decoration: underline;
+    }
+
+    /* Main Content Area */
+    .main-container {
+      flex: 1;
+      padding: 30px 40px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Tabs Header */
+    .tabs-header {
+      display: flex;
+      gap: 15px;
+      padding-left: 20px;
+    }
+
+    .tab-btn {
+      background-color: #0099e5;
+      color: #fff;
+      border: none;
+      padding: 10px 30px;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      opacity: 0.9;
+    }
+
+    .tab-btn.active {
+      opacity: 1;
+    }
+
+    /* Content Box */
+    .content-box {
+      flex: 1;
+      border: 3px solid #0099e5;
+      border-radius: 20px;
+      background-color: #fff;
+      padding: 25px;
+      overflow-y: auto;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Simple Table Styling inside Content */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #0099e5;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="profile-card">
+      <div class="avatar">A</div>
+      <div class="profile-info">
+        <div class="name">Administrator</div>
+        <div class="role">Admin</div>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <button class="menu-btn">
+        Home
+        <span class="toggle-icon"></span>
+      </button>
+      <div class="submenu">
+        <a onclick="switchTab('dashboard')">Dashboard</a>
+        <a onclick="switchTab('pekerjaan-pending')">Pekerjaan Pending</a>
+        <a onclick="switchTab('rekap-material')">Rekap Material</a>
+        <a onclick="switchTab('anggota')">Anggota</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <button class="menu-btn">
+        Pekerjaan
+        <span class="toggle-icon"></span>
+      </button>
+    </div>
+
+    <div class="menu-group">
+      <button class="menu-btn">
+        Inventory
+        <span class="toggle-icon"></span>
+      </button>
+    </div>
+
+    <div class="menu-group">
+      <button class="menu-btn">
+        Arsip
+        <span class="toggle-icon"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Area -->
+  <div class="main-container">
+    <!-- Header Tabs -->
+    <div class="tabs-header">
+      <button class="tab-btn active" id="btn-dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+      <button class="tab-btn" id="btn-rekap-material" onclick="switchTab('rekap-material')">Rekap Material</button>
+      <button class="tab-btn" id="btn-anggota" onclick="switchTab('anggota')">Anggota</button>
+    </div>
+
+    <!-- Inner Content Container -->
+    <div class="content-box">
+      <!-- Tab: Dashboard -->
+      <div id="tab-dashboard" class="tab-content active">
+        <h2>Dashboard Utama</h2>
+        <p style="margin-top: 10px;">Selamat datang di panel kontrol Administrator.</p>
+      </div>
+
+      <!-- Tab: Pekerjaan Pending -->
+      <div id="tab-pekerjaan-pending" class="tab-content">
+        <h2>Daftar Pekerjaan Pending</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Pekerjaan</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Maintenance Server</td>
+              <td>Pending</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab: Rekap Material -->
+      <div id="tab-rekap-material" class="tab-content">
+        <h2>Rekap Material</h2>
+        <p style="margin-top: 10px;">Ringkasan pengeluaran dan kebutuhan material proyek.</p>
+      </div>
+
+      <!-- Tab: Anggota -->
+      <div id="tab-anggota" class="tab-content">
+        <h2>Daftar Anggota Tim</h2>
+        <p style="margin-top: 10px;">Informasi dan daftar seluruh anggota aktif.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      // Sembunyikan semua tab content
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => content.classList.remove('active'));
+
+      // Deaktifkan semua tombol header tab
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      // Tampilkan tab yang dipilih
+      const targetContent = document.getElementById('tab-' + tabId);
+      if (targetContent) {
+        targetContent.classList.add('active');
+      }
+
+      // Aktifkan tombol yang sesuai jika ada
+      const targetBtn = document.getElementById('btn-' + tabId);
+      if (targetBtn) {
+        targetBtn.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
