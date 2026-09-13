@@ -65,7 +65,7 @@
     .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
     .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 
-    /* INNER SUB-TABS STYLES FOR STOK BARANG */
+    /* INNER SUB-TABS STYLES */
     .inner-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
     .inner-tab-btn { background: #e0f2fe; color: #0099e5; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.2s; }
     .inner-tab-btn.active { background: #0099e5; color: #fff; }
@@ -123,10 +123,11 @@
         </div></div>
       </div>
 
+      <!-- PEKERJAAN MENU -->
       <div class="menu-card" id="group-pekerjaan">
         <button class="menu-btn" onclick="selectMainMenu('pekerjaan')">Pekerjaan <span class="toggle-icon"></span></button>
         <div class="submenu-wrapper"><div class="submenu">
-          <a onclick="switchTab('pekerjaan', 'proyek-aktif')">Proyek Aktif</a>
+          <a onclick="switchTab('pekerjaan', 'pekerjaan-daily')">Pekerjaan Daily</a>
           <a onclick="switchTab('pekerjaan', 'jadwal-pekerjaan')">Jadwal Pekerjaan</a>
           <a onclick="switchTab('pekerjaan', 'riwayat-proyek')">Riwayat Proyek</a>
         </div></div>
@@ -170,18 +171,34 @@
         <div id="tab-pekerjaan-pending" class="tab-content"><h2>Pekerjaan Pending</h2></div>
         <div id="tab-rekap-material" class="tab-content"><h2>Rekap Material</h2></div>
         <div id="tab-anggota" class="tab-content"><h2>Daftar Anggota</h2></div>
-        <div id="tab-proyek-aktif" class="tab-content"><h2>Proyek Aktif</h2></div>
+
+        <!-- TAB PEKERJAAN DAILY -->
+        <div id="tab-pekerjaan-daily" class="tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 style="color: #0099e5;">Pekerjaan Daily</h2>
+          </div>
+
+          <div class="inner-tabs">
+            <button class="inner-tab-btn active" id="btn-shift-pagi" onclick="filterShift('Pagi')">Shift Pagi</button>
+            <button class="inner-tab-btn" id="btn-shift-sore" onclick="filterShift('Sore')">Shift Sore</button>
+            <button class="inner-tab-btn" id="btn-shift-malam" onclick="filterShift('Malam')">Shift Malam</button>
+          </div>
+
+          <div id="shiftContentContainer">
+            <p style="color: #666; margin-top: 10px;">Menampilkan daftar pekerjaan untuk <b>Shift Pagi</b>.</p>
+          </div>
+        </div>
+
         <div id="tab-jadwal-pekerjaan" class="tab-content"><h2>Jadwal Pekerjaan</h2></div>
         <div id="tab-riwayat-proyek" class="tab-content"><h2>Riwayat Proyek</h2></div>
 
-        <!-- TAB STOK BARANG DENGAN SUB-TABS INTERAKTIF -->
+        <!-- TAB STOK BARANG -->
         <div id="tab-stok-barang" class="tab-content">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h2 style="color: #0099e5;">Stok Barang & Inventory</h2>
             <button class="btn-action" style="padding: 6px 14px; font-size: 13px;" onclick="loadInventoryData()">Refresh Data</button>
           </div>
 
-          <!-- Sub-tabs untuk memisahkan sheet barang -->
           <div class="inner-tabs">
             <button class="inner-tab-btn active" id="btn-sheet-elektrikal" onclick="switchInventorySheet('ITEM ELEKTRIKAL')">Item Elektrikal</button>
             <button class="inner-tab-btn" id="btn-sheet-kitchen" onclick="switchInventorySheet('ITEM KITCHEN')">Item Kitchen</button>
@@ -265,7 +282,7 @@
 
     const menuStructure = {
       home: { title: "Home", items: [ { id: "dashboard", label: "Dashboard" }, { id: "pekerjaan-pending", label: "Pekerjaan Pending" }, { id: "rekap-material", label: "Rekap Material" }, { id: "anggota", label: "Anggota" } ] },
-      pekerjaan: { title: "Pekerjaan", items: [ { id: "proyek-aktif", label: "Proyek Aktif" }, { id: "jadwal-pekerjaan", label: "Jadwal Pekerjaan" }, { id: "riwayat-proyek", label: "Riwayat Proyek" } ] },
+      pekerjaan: { title: "Pekerjaan", items: [ { id: "pekerjaan-daily", label: "Pekerjaan Daily" }, { id: "jadwal-pekerjaan", label: "Jadwal Pekerjaan" }, { id: "riwayat-proyek", label: "Riwayat Proyek" } ] },
       inventory: { title: "Inventory", items: [ { id: "stok-barang", label: "Stok Barang" }, { id: "pembelian-material", label: "Pembelian Material" }, { id: "alat-kerja", label: "Daftar Alat Kerja" } ] },
       arsip: { title: "Arsip", items: [ { id: "dokumen-laporan", label: "Laporan Bulanan" }, { id: "arsip-kontrak", label: "Arsip Kontrak" } ] },
       pengaturan: { title: "Pengaturan", items: [ { id: "profil-saya", label: "Profil Saya" }, { id: "ganti-password", label: "Ganti Password" }, { id: "tambah-anggota", label: "Tambah Anggota", adminOnly: true }, { id: "konfigurasi-api", label: "Konfigurasi API", adminOnly: true } ] }
@@ -337,7 +354,21 @@
       document.getElementById("cfgApiPassword").value = getApiPassword();
     }
 
-    // FUNGSI LOAD STOK BARANG DARI GOOGLE SHEETS
+    // FUNGSI FILTER SHIFT UNTUK PEKERJAAN DAILY
+    function filterShift(shiftName) {
+      document.getElementById("btn-shift-pagi").classList.remove("active");
+      document.getElementById("btn-shift-sore").classList.remove("active");
+      document.getElementById("btn-shift-malam").classList.remove("active");
+
+      if (shiftName === 'Pagi') document.getElementById("btn-shift-pagi").classList.add("active");
+      if (shiftName === 'Sore') document.getElementById("btn-shift-sore").classList.add("active");
+      if (shiftName === 'Malam') document.getElementById("btn-shift-malam").classList.add("active");
+
+      const container = document.getElementById("shiftContentContainer");
+      container.innerHTML = `<p style="color: #666; margin-top: 10px;">Menampilkan daftar pekerjaan untuk <b>Shift ${shiftName}</b>.</p>`;
+    }
+
+    // FUNGSI LOAD STOK BARANG
     async function loadInventoryData() {
       const container = document.getElementById("inventoryContainer");
       container.innerHTML = `<p style="color: #0099e5;"><span class="spinner" style="border-top-color:#0099e5;"></span> Memuat data stok dari Google Sheets...</p>`;
@@ -629,7 +660,6 @@
       if (targetContent) {
         setTimeout(() => { 
           targetContent.classList.add('active'); 
-          // Jika berpindah ke tab stok-barang, muat datanya dari Apps Script
           if (subTabId === 'stok-barang') {
             loadInventoryData();
           }
