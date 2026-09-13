@@ -81,17 +81,19 @@
     .badge-danger { background: #fee2e2; color: #991b1b; }
     .badge-normal { background: #dcfce7; color: #15803d; }
 
-    /* MODAL STYLES */
+    /* MODAL STYLES & OVERFLOW FIX */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 99999; }
-    .modal-card { background: #fff; width: 100%; max-width: 550px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
+    .modal-card { background: #fff; width: 100%; max-width: 600px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .modal-header h3 { color: #0099e5; }
     .close-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #666; }
     
-    .part-item-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
-    .part-item-row select { flex: 1; }
-    .part-item-row input { width: 80px; }
-    .btn-remove-part { background: #fee2e2; color: #991b1b; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    /* PART ITEM ROW FLEX LAYOUT (FIX OVERFLOW) */
+    .part-item-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; width: 100%; box-sizing: border-box; }
+    .part-search-input { flex: 1; min-width: 0; text-overflow: ellipsis; }
+    .part-qty-input { width: 75px; flex-shrink: 0; text-align: center; }
+    .btn-remove-part { background: #fee2e2; color: #991b1b; border: none; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; flex-shrink: 0; height: 43px; }
+    .btn-remove-part:hover { background: #fca5a5; }
   </style>
 </head>
 <body>
@@ -332,10 +334,13 @@
       <div id="partSection" style="display: none; background: #f9fafb; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 18px;">
         <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 8px;">Daftar Sparepart yang Digunakan:</label>
         <div id="partListContainer"></div>
-        <button class="btn-action" style="background: #10b981; padding: 6px 12px; font-size: 12px; margin-top: 5px;" onclick="addPartRow()">+ Tambah Part</button>
+        <button class="btn-action" style="background: #10b981; padding: 8px 14px; font-size: 13px; margin-top: 5px;" onclick="addPartRow()">+ Tambah Part</button>
       </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+      <!-- DATALIST ENGINE PENCARIAN SPAREPART -->
+      <datalist id="sparepartDataList"></datalist>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
         <button class="btn-action" style="background: #6b7280;" onclick="closeAddJobModal()">Batal</button>
         <button class="btn-action" id="btnSaveJob" onclick="submitDailyJob()">Simpan Pekerjaan</button>
       </div>
@@ -425,7 +430,7 @@
       document.getElementById("cfgApiPassword").value = getApiPassword();
     }
 
-    /* MODAL TAMBAH PEKERJAAN FUNCTIONS */
+    /* POP-UP MODAL & SEARCH ENGINE FUNCTIONS */
     async function openAddJobModal() {
       document.getElementById("jobNamaTeknisi").value = currentUser ? currentUser.nama : "";
       document.getElementById("jobShift").value = activeShiftFilter;
@@ -437,14 +442,28 @@
 
       document.getElementById("addJobModal").style.display = "flex";
 
-      // Muat daftar inventory jika belum ter-cache
       if (allInventoryItems.length === 0) {
         await loadInventoryData();
+      } else {
+        renderSparepartDatalist();
       }
     }
 
     function closeAddJobModal() {
       document.getElementById("addJobModal").style.display = "none";
+    }
+
+    function renderSparepartDatalist() {
+      const datalist = document.getElementById("sparepartDataList");
+      datalist.innerHTML = "";
+
+      allInventoryItems.forEach(item => {
+        const option = document.createElement("option");
+        // Format label pencarian: Barcode - Nama (Kategori) [Stok: X]
+        option.value = `${item.barcode} | ${item.nama}`;
+        option.label = `[${item.sheetName}] Stok: ${item.stokGudang} ${item.satuan || ''}`;
+        datalist.appendChild(option);
+      });
     }
 
     function togglePartSection() {
@@ -465,16 +484,10 @@
       const rowDiv = document.createElement("div");
       rowDiv.className = "part-item-row";
 
-      let selectHtml = `<select class="part-select"><option value="">-- Pilih Sparepart --</option>`;
-      allInventoryItems.forEach(item => {
-        selectHtml += `<option value="${item.barcode}" data-sheet="${item.sheetName}" data-nama="${item.nama}" data-satuan="${item.satuan}">[${item.sheetName}] ${item.barcode} - ${item.nama} (Stok: ${item.stokGudang})</option>`;
-      });
-      selectHtml += `</select>`;
-
       rowDiv.innerHTML = `
-        ${selectHtml}
-        <input type="number" class="part-qty" min="1" value="1" placeholder="Qty" />
-        <button class="btn-remove-part" onclick="this.parentElement.remove()">Hapus</button>
+        <input type="text" list="sparepartDataList" class="part-search-input" placeholder="Cari Kode atau Nama Sparepart..." />
+        <input type="number" class="part-qty-input" min="1" value="1" placeholder="Qty" />
+        <button class="btn-remove-part" onclick="this.parentElement.remove()" title="Hapus Baris">&times;</button>
       `;
 
       container.appendChild(rowDiv);
@@ -500,25 +513,35 @@
         let valid = true;
 
         rows.forEach(row => {
-          const select = row.querySelector(".part-select");
-          const qtyInput = row.querySelector(".part-qty");
-          const selectedOpt = select.options[select.selectedIndex];
+          const searchVal = row.querySelector(".part-search-input").value.trim();
+          const qtyVal = row.querySelector(".part-qty-input").value;
 
-          if (!select.value || !qtyInput.value || Number(qtyInput.value) <= 0) {
+          if (!searchVal || !qtyVal || Number(qtyVal) <= 0) {
             valid = false;
           } else {
-            partsList.push({
-              barcode: select.value,
-              sheetName: selectedOpt.getAttribute("data-sheet"),
-              namaBarang: selectedOpt.getAttribute("data-nama"),
-              satuan: selectedOpt.getAttribute("data-satuan") || "Pcs",
-              qty: Number(qtyInput.value)
-            });
+            // Cocokkan nilai pencarian dengan data item di memori
+            const barcodeMatch = searchVal.split(" | ")[0].trim();
+            const matchedItem = allInventoryItems.find(i => 
+              String(i.barcode).toLowerCase() === barcodeMatch.toLowerCase() || 
+              `${i.barcode} | ${i.nama}`.toLowerCase() === searchVal.toLowerCase()
+            );
+
+            if (matchedItem) {
+              partsList.push({
+                barcode: matchedItem.barcode,
+                sheetName: matchedItem.sheetName,
+                namaBarang: matchedItem.nama,
+                satuan: matchedItem.satuan || "Pcs",
+                qty: Number(qtyVal)
+              });
+            } else {
+              valid = false;
+            }
           }
         });
 
         if (!valid || partsList.length === 0) {
-          showAlert(alertBox, "Pilih sparepart dan isi Qty dengan benar!", "error");
+          showAlert(alertBox, "Pilih sparepart dari daftar rekomendasi dan isi Qty dengan benar!", "error");
           return;
         }
       }
@@ -542,8 +565,8 @@
 
         if (res.status === "success") {
           closeAddJobModal();
-          await loadDailyJobs(); // Reload data pekerjaan
-          allInventoryItems = []; // Invalidate cache stok barang
+          await loadDailyJobs();
+          allInventoryItems = []; // Invalidate cache stok
         } else {
           showAlert(alertBox, res.message || "Gagal menyimpan pekerjaan.", "error");
         }
@@ -644,6 +667,7 @@
         if (result.status === "success") {
           cachedInventoryData = result.data;
           allInventoryItems = result.allItems || [];
+          renderSparepartDatalist();
           renderInventoryTable(activeInventorySheet);
         } else {
           container.innerHTML = `<p style="color: #e74c3c;">Gagal memuat data: ${result.message}</p>`;
