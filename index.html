@@ -64,6 +64,22 @@
     .alert { padding: 10px 15px; border-radius: 8px; font-size: 13.5px; margin-bottom: 15px; display: none; }
     .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
     .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+    /* INNER SUB-TABS STYLES FOR STOK BARANG */
+    .inner-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
+    .inner-tab-btn { background: #e0f2fe; color: #0099e5; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .inner-tab-btn.active { background: #0099e5; color: #fff; }
+
+    /* TABLE STYLES */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: left; font-size: 13px; }
+    th { background-color: #0099e5; color: white; white-space: nowrap; }
+    tr:nth-child(even) { background-color: #f9fafb; }
+    tr:hover { background-color: #f0f9ff; }
+    
+    .badge-stock { padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
+    .badge-danger { background: #fee2e2; color: #991b1b; }
+    .badge-normal { background: #dcfce7; color: #15803d; }
   </style>
 </head>
 <body>
@@ -157,7 +173,27 @@
         <div id="tab-proyek-aktif" class="tab-content"><h2>Proyek Aktif</h2></div>
         <div id="tab-jadwal-pekerjaan" class="tab-content"><h2>Jadwal Pekerjaan</h2></div>
         <div id="tab-riwayat-proyek" class="tab-content"><h2>Riwayat Proyek</h2></div>
-        <div id="tab-stok-barang" class="tab-content"><h2>Stok Barang</h2></div>
+
+        <!-- TAB STOK BARANG DENGAN SUB-TABS INTERAKTIF -->
+        <div id="tab-stok-barang" class="tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 style="color: #0099e5;">Stok Barang & Inventory</h2>
+            <button class="btn-action" style="padding: 6px 14px; font-size: 13px;" onclick="loadInventoryData()">Refresh Data</button>
+          </div>
+
+          <!-- Sub-tabs untuk memisahkan sheet barang -->
+          <div class="inner-tabs">
+            <button class="inner-tab-btn active" id="btn-sheet-elektrikal" onclick="switchInventorySheet('ITEM ELEKTRIKAL')">Item Elektrikal</button>
+            <button class="inner-tab-btn" id="btn-sheet-kitchen" onclick="switchInventorySheet('ITEM KITCHEN')">Item Kitchen</button>
+            <button class="inner-tab-btn" id="btn-sheet-plumbing" onclick="switchInventorySheet('ITEM PLUMBING')">Item Plumbing</button>
+            <button class="inner-tab-btn" id="btn-sheet-sipil" onclick="switchInventorySheet('ITEM SIPIL')">Item Sipil</button>
+          </div>
+
+          <div id="inventoryContainer">
+            <p style="color: #666;">Memuat data dari Google Sheets...</p>
+          </div>
+        </div>
+
         <div id="tab-pembelian-material" class="tab-content"><h2>Pembelian Material</h2></div>
         <div id="tab-alat-kerja" class="tab-content"><h2>Daftar Alat Kerja</h2></div>
         <div id="tab-dokumen-laporan" class="tab-content"><h2>Laporan Bulanan</h2></div>
@@ -189,7 +225,6 @@
         <!-- TAB TAMBAH ANGGOTA (KHUSUS ADMIN) -->
         <div id="tab-tambah-anggota" class="tab-content">
           <h2 style="color: #0099e5;">Tambah Anggota Baru</h2>
-          <p style="color: #666; font-size: 14px;">Fitur khusus Admin untuk menambahkan pengguna baru ke sistem.</p>
           <div class="form-container">
             <div id="addUserAlert" class="alert"></div>
             <div class="input-group"><label>Nama Lengkap</label><input type="text" id="addNama" placeholder="Masukkan Nama Lengkap" /></div>
@@ -210,17 +245,10 @@
         <!-- TAB KONFIGURASI API (KHUSUS ADMIN) -->
         <div id="tab-konfigurasi-api" class="tab-content">
           <h2 style="color: #0099e5;">Konfigurasi Google Sheets API</h2>
-          <p style="color: #666; font-size: 14px;">Kelola URL Deploy Google Apps Script dan Sandi Akses tanpa mengubah kode aplikasi.</p>
           <div class="form-container">
             <div id="apiConfigAlert" class="alert"></div>
-            <div class="input-group">
-              <label>URL Deploy Google Apps Script</label>
-              <input type="text" id="cfgScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" />
-            </div>
-            <div class="input-group">
-              <label>Sandi Akses API (Opsional)</label>
-              <input type="password" id="cfgApiPassword" placeholder="Masukkan Sandi API (Jika ada)" />
-            </div>
+            <div class="input-group"><label>URL Deploy Google Apps Script</label><input type="text" id="cfgScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" /></div>
+            <div class="input-group"><label>Sandi Akses API (Opsional)</label><input type="password" id="cfgApiPassword" placeholder="Masukkan Sandi API (Jika ada)" /></div>
             <button class="btn-action" id="btnSaveApiConfig" onclick="saveApiSettings()">Simpan Pengaturan API</button>
           </div>
         </div>
@@ -232,13 +260,8 @@
   <script>
     const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycb.../exec";
 
-    function getScriptUrl() {
-      return localStorage.getItem("cfg_script_url") || DEFAULT_SCRIPT_URL;
-    }
-
-    function getApiPassword() {
-      return localStorage.getItem("cfg_api_password") || "";
-    }
+    function getScriptUrl() { return localStorage.getItem("cfg_script_url") || DEFAULT_SCRIPT_URL; }
+    function getApiPassword() { return localStorage.getItem("cfg_api_password") || ""; }
 
     const menuStructure = {
       home: { title: "Home", items: [ { id: "dashboard", label: "Dashboard" }, { id: "pekerjaan-pending", label: "Pekerjaan Pending" }, { id: "rekap-material", label: "Rekap Material" }, { id: "anggota", label: "Anggota" } ] },
@@ -250,6 +273,8 @@
 
     let currentMenuKey = "home";
     let currentUser = null;
+    let cachedInventoryData = {};
+    let activeInventorySheet = "ITEM ELEKTRIKAL";
 
     async function processLogin() {
       const uInput = document.getElementById("username").value.trim();
@@ -273,11 +298,7 @@
         const result = await response.json();
 
         if (result.status === "success") {
-          currentUser = {
-            nama: result.nama,
-            username: result.username,
-            role: result.role.toLowerCase()
-          };
+          currentUser = { nama: result.nama, username: result.username, role: result.role.toLowerCase() };
           localStorage.setItem("user_session", JSON.stringify(currentUser));
           showDashboard(currentUser);
         } else {
@@ -301,9 +322,7 @@
       updateProfileUI();
 
       const adminElements = document.querySelectorAll(".role-admin-only");
-      adminElements.forEach(el => {
-        el.style.display = (user.role === "admin") ? "block" : "none";
-      });
+      adminElements.forEach(el => { el.style.display = (user.role === "admin") ? "block" : "none"; });
 
       selectMainMenu("home");
     }
@@ -314,9 +333,94 @@
       document.getElementById("userAvatar").innerText = currentUser.nama.charAt(0);
       document.getElementById("editNamaLengkap").value = currentUser.nama;
       document.getElementById("editUsername").value = currentUser.username;
-      
       document.getElementById("cfgScriptUrl").value = getScriptUrl();
       document.getElementById("cfgApiPassword").value = getApiPassword();
+    }
+
+    // FUNGSI LOAD STOK BARANG DARI GOOGLE SHEETS
+    async function loadInventoryData() {
+      const container = document.getElementById("inventoryContainer");
+      container.innerHTML = `<p style="color: #0099e5;"><span class="spinner" style="border-top-color:#0099e5;"></span> Memuat data stok dari Google Sheets...</p>`;
+
+      try {
+        const url = `${getScriptUrl()}?action=getInventory&api_password=${encodeURIComponent(getApiPassword())}`;
+        const response = await fetch(url);
+        const result = await response.json();
+
+        if (result.status === "success") {
+          cachedInventoryData = result.data;
+          renderInventoryTable(activeInventorySheet);
+        } else {
+          container.innerHTML = `<p style="color: #e74c3c;">Gagal memuat data: ${result.message}</p>`;
+        }
+      } catch (err) {
+        container.innerHTML = `<p style="color: #e74c3c;">Gagal terhubung ke Google Sheets API.</p>`;
+      }
+    }
+
+    function switchInventorySheet(sheetName) {
+      activeInventorySheet = sheetName;
+      document.querySelectorAll(".inner-tab-btn").forEach(btn => btn.classList.remove("active"));
+      
+      if (sheetName === 'ITEM ELEKTRIKAL') document.getElementById("btn-sheet-elektrikal").classList.add("active");
+      if (sheetName === 'ITEM KITCHEN') document.getElementById("btn-sheet-kitchen").classList.add("active");
+      if (sheetName === 'ITEM PLUMBING') document.getElementById("btn-sheet-plumbing").classList.add("active");
+      if (sheetName === 'ITEM SIPIL') document.getElementById("btn-sheet-sipil").classList.add("active");
+
+      renderInventoryTable(sheetName);
+    }
+
+    function renderInventoryTable(sheetName) {
+      const container = document.getElementById("inventoryContainer");
+      const items = cachedInventoryData[sheetName] || [];
+
+      if (items.length === 0) {
+        container.innerHTML = `<p style="color: #666; margin-top: 15px;">Tidak ada data barang di sheet <b>${sheetName}</b>.</p>`;
+        return;
+      }
+
+      let html = `
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Barcode</th>
+                <th>Nama Barang</th>
+                <th>Kategori</th>
+                <th>Merk</th>
+                <th>Spesifikasi</th>
+                <th>Satuan</th>
+                <th>Lokasi Rak</th>
+                <th>Stok Gudang</th>
+                <th>Stok Min.</th>
+                <th>Supplier</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      items.forEach(item => {
+        const isLow = Number(item.stokGudang) <= Number(item.stokMin);
+        const badgeClass = isLow ? "badge-danger" : "badge-normal";
+
+        html += `
+          <tr>
+            <td><b>${item.barcode || '-'}</b></td>
+            <td>${item.nama || '-'}</td>
+            <td>${item.kategori || '-'}</td>
+            <td>${item.merk || '-'}</td>
+            <td>${item.spesifikasi || '-'}</td>
+            <td>${item.satuan || '-'}</td>
+            <td>${item.lokasi || '-'}</td>
+            <td><span class="badge-stock ${badgeClass}">${item.stokGudang}</span></td>
+            <td>${item.stokMin || '0'}</td>
+            <td>${item.supplier || '-'}</td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table></div>`;
+      container.innerHTML = html;
     }
 
     function saveApiSettings() {
@@ -523,7 +627,13 @@
 
       const targetContent = document.getElementById('tab-' + subTabId);
       if (targetContent) {
-        setTimeout(() => { targetContent.classList.add('active'); }, 30);
+        setTimeout(() => { 
+          targetContent.classList.add('active'); 
+          // Jika berpindah ke tab stok-barang, muat datanya dari Apps Script
+          if (subTabId === 'stok-barang') {
+            loadInventoryData();
+          }
+        }, 30);
       }
 
       const targetBtn = document.getElementById('btn-' + subTabId);
