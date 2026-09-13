@@ -433,6 +433,19 @@
         </div>
       </div>
 
+      <!-- Pengaturan Menu -->
+      <div class="menu-card" id="group-pengaturan">
+        <button class="menu-btn" onclick="selectMainMenu('pengaturan')">
+          Pengaturan <span class="toggle-icon"></span>
+        </button>
+        <div class="submenu-wrapper">
+          <div class="submenu">
+            <a onclick="switchTab('pengaturan', 'profil-saya')">Profil Saya</a>
+            <a onclick="switchTab('pengaturan', 'ganti-password')">Ganti Password</a>
+          </div>
+        </div>
+      </div>
+
       <button class="btn-logout" onclick="logout()">Keluar (Logout)</button>
     </div>
 
@@ -506,13 +519,22 @@
           <p style="margin-top:10px;">Berkas kerja sama dan kontrak.</p>
         </div>
 
+        <!-- PENGATURAN TABS -->
+        <div id="tab-profil-saya" class="tab-content">
+          <h2 style="color: #0099e5; margin-bottom: 15px;">Profil Saya</h2>
+          <p>Halaman kelola informasi dan detail akun penguna.</p>
+        </div>
+        <div id="tab-ganti-password" class="tab-content">
+          <h2 style="color: #0099e5; margin-bottom: 15px;">Ganti Password</h2>
+          <p>Halaman perbarui kata sandi akun.</p>
+        </div>
+
       </div>
     </div>
   </div>
 
   <script>
-    // MASUKKAN WEB APP URL DARI GOOGLE APPS SCRIPT DI SINI:
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJL15YV8HHAiKFrEH773m2q1uCWbcaxa9bK1JUqGLDPMFlpdspYdlm81I4myNw3LM/exec"; 
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycb.../exec"; 
 
     const menuStructure = {
       home: {
@@ -546,12 +568,18 @@
           { id: "dokumen-laporan", label: "Laporan Bulanan" },
           { id: "arsip-kontrak", label: "Arsip Kontrak" }
         ]
+      },
+      pengaturan: {
+        title: "Pengaturan",
+        items: [
+          { id: "profil-saya", label: "Profil Saya" },
+          { id: "ganti-password", label: "Ganti Password" }
+        ]
       }
     };
 
     let currentMenuKey = "home";
 
-    // FUNGSI PROSES LOGIN REALTIME KE GOOGLE SHEETS
     async function processLogin() {
       const uInput = document.getElementById("username").value.trim();
       const pInput = document.getElementById("password").value.trim();
@@ -573,14 +601,11 @@
         const result = await response.json();
 
         if (result.status === "success") {
-          // Simpan sesi login di localStorage browser
           const userData = {
             nama: result.nama,
             role: result.role.toLowerCase()
           };
           localStorage.setItem("user_session", JSON.stringify(userData));
-
-          // Masuk ke Dashboard
           showDashboard(userData);
         } else {
           err.innerText = result.message || "Username atau Password salah!";
@@ -595,17 +620,14 @@
       }
     }
 
-    // TAMPILKAN DASHBOARD SESUAI HASIL LOGIN
     function showDashboard(user) {
       document.getElementById("loginPage").style.display = "none";
       document.getElementById("appDashboard").style.display = "flex";
 
-      // Set Informasi Profil
       document.getElementById("userNameDisplay").innerText = user.nama;
       document.getElementById("userRoleDisplay").innerText = user.role;
       document.getElementById("userAvatar").innerText = user.nama.charAt(0);
 
-      // Sembunyikan Menu Spesifik Berdasarkan Role
       const arsipMenu = document.querySelector(".role-admin-only");
       if (user.role !== "admin") {
         if (arsipMenu) arsipMenu.style.display = "none";
@@ -616,7 +638,6 @@
       selectMainMenu("home");
     }
 
-    // LOGOUT
     function logout() {
       localStorage.removeItem("user_session");
       document.getElementById("username").value = "";
@@ -625,7 +646,6 @@
       document.getElementById("loginPage").style.display = "flex";
     }
 
-    // NAVIGASI MENU UTAMA
     function selectMainMenu(menuKey) {
       currentMenuKey = menuKey;
       document.querySelectorAll('.menu-card').forEach(card => card.classList.remove('open'));
@@ -637,7 +657,6 @@
       switchTab(menuKey, defaultSubTabId);
     }
 
-    // RENDER HEADER TABS DYNAMIC
     function renderHeaderTabs(menuKey) {
       const tabsContainer = document.getElementById('dynamic-tabs');
       tabsContainer.innerHTML = '';
@@ -653,7 +672,6 @@
       });
     }
 
-    // SWITCH TAB SUBMENU
     function switchTab(menuKey, subTabId) {
       if (currentMenuKey !== menuKey) {
         currentMenuKey = menuKey;
@@ -675,7 +693,6 @@
       if (targetBtn) { targetBtn.classList.add('active'); }
     }
 
-    // CEK SESI LOGIN SAAT BERKUNJUNG KEMBALI
     window.onload = function() {
       const savedUser = localStorage.getItem("user_session");
       if (savedUser) {
