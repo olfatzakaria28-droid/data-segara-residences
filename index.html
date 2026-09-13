@@ -31,6 +31,7 @@
       z-index: 10;
     }
 
+    /* Profile Card */
     .profile-card {
       background: #ffffff;
       color: #0099e5;
@@ -60,11 +61,6 @@
       font-size: 24px;
       font-weight: bold;
       border: 2px solid #0099e5;
-      transition: transform 0.3s ease;
-    }
-
-    .profile-card:hover .avatar {
-      transform: scale(1.05);
     }
 
     .profile-info .name {
@@ -77,17 +73,26 @@
       color: #666;
     }
 
-    .menu-group {
-      display: flex;
-      flex-direction: column;
+    /* Container Menu Card (Menggabungkan Button & Submenu) */
+    .menu-card {
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden; /* Menjaga agar sudut rounded tidak terpotong */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
     }
 
+    .menu-card:hover {
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Main Menu Button */
     .menu-btn {
+      width: 100%;
       background: #ffffff;
       color: #0099e5;
       border: none;
-      padding: 12px 20px;
-      border-radius: 20px;
+      padding: 14px 20px;
       font-weight: bold;
       font-size: 16px;
       display: flex;
@@ -95,21 +100,15 @@
       align-items: center;
       cursor: pointer;
       text-align: left;
-      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-      z-index: 2;
+      outline: none;
     }
 
-    .menu-btn:hover {
-      transform: translateX(4px);
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Toggle Switch Style & Animation */
+    /* Toggle Switch Indicator */
     .toggle-icon {
-      width: 32px;
-      height: 18px;
-      background: #ccc;
-      border-radius: 10px;
+      width: 38px;
+      height: 20px;
+      background: #e0e0e0;
+      border-radius: 12px;
       position: relative;
       transition: background-color 0.3s ease;
     }
@@ -119,53 +118,50 @@
       position: absolute;
       left: 3px;
       top: 3px;
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       background: #fff;
       border-radius: 50%;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
 
-    /* Active Accordion State */
-    .menu-group.open .toggle-icon {
+    /* State Aktif / Terbuka */
+    .menu-card.open .toggle-icon {
       background-color: #0099e5;
     }
 
-    .menu-group.open .toggle-icon::after {
-      transform: translateX(14px);
+    .menu-card.open .toggle-icon::after {
+      transform: translateX(18px);
     }
 
-    /* Submenu Accordion Animation */
-    .submenu {
-      background: #ffffff;
-      border-radius: 0 0 15px 15px;
-      padding: 0 15px;
+    /* Submenu Wrapper & Accordion Animation */
+    .submenu-wrapper {
       max-height: 0;
       overflow: hidden;
       opacity: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: -10px;
-      padding-top: 10px;
-      transition: max-height 0.4s cubic-bezier(0, 1, 0, 1), opacity 0.3s ease, padding 0.3s ease;
+      transition: max-height 0.35s ease-in-out, opacity 0.3s ease;
     }
 
-    .menu-group.open .submenu {
-      max-height: 200px; /* Nilai cukup besar untuk menampung submenu */
+    .menu-card.open .submenu-wrapper {
+      max-height: 300px;
       opacity: 1;
-      padding-bottom: 12px;
-      padding-top: 15px;
-      transition: max-height 0.4s ease-in-out, opacity 0.3s ease 0.1s, padding 0.3s ease;
+    }
+
+    .submenu {
+      padding: 5px 20px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .submenu a {
       color: #0099e5;
       text-decoration: none;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       padding: 6px 8px;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.2s ease, transform 0.2s ease;
     }
@@ -183,7 +179,7 @@
       flex-direction: column;
     }
 
-    /* Tabs Header & Animations */
+    /* Header Tabs */
     .tabs-header {
       display: flex;
       gap: 15px;
@@ -202,7 +198,7 @@
       cursor: pointer;
       opacity: 0.6;
       transform: translateY(4px);
-      transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
     .tab-btn:hover {
@@ -215,7 +211,7 @@
       transform: translateY(0);
     }
 
-    /* Content Box */
+    /* Content Box Container */
     .content-box {
       flex: 1;
       border: 3px solid #0099e5;
@@ -226,7 +222,7 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
 
-    /* Content Transition Fade-in & Slide-up */
+    /* Content Animation */
     .tab-content {
       display: none;
       opacity: 0;
@@ -240,7 +236,7 @@
       transform: translateY(0);
     }
 
-    /* Table Styling */
+    /* Table Style */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -256,10 +252,6 @@
     th {
       background-color: #0099e5;
       color: white;
-    }
-
-    tr {
-      transition: background-color 0.2s ease;
     }
 
     tr:hover {
@@ -279,35 +271,40 @@
       </div>
     </div>
 
-    <!-- Home Menu (Default Open) -->
-    <div class="menu-group open" id="group-home">
+    <!-- Home Menu Card (Default Open) -->
+    <div class="menu-card open" id="group-home">
       <button class="menu-btn" onclick="toggleMenu('group-home')">
         Home
         <span class="toggle-icon"></span>
       </button>
-      <div class="submenu">
-        <a onclick="switchTab('dashboard')">Dashboard</a>
-        <a onclick="switchTab('pekerjaan-pending')">Pekerjaan Pending</a>
-        <a onclick="switchTab('rekap-material')">Rekap Material</a>
-        <a onclick="switchTab('anggota')">Anggota</a>
+      <div class="submenu-wrapper">
+        <div class="submenu">
+          <a onclick="switchTab('dashboard')">Dashboard</a>
+          <a onclick="switchTab('pekerjaan-pending')">Pekerjaan Pending</a>
+          <a onclick="switchTab('rekap-material')">Rekap Material</a>
+          <a onclick="switchTab('anggota')">Anggota</a>
+        </div>
       </div>
     </div>
 
-    <div class="menu-group" id="group-pekerjaan">
+    <!-- Pekerjaan Menu Card -->
+    <div class="menu-card" id="group-pekerjaan">
       <button class="menu-btn" onclick="toggleMenu('group-pekerjaan')">
         Pekerjaan
         <span class="toggle-icon"></span>
       </button>
     </div>
 
-    <div class="menu-group" id="group-inventory">
+    <!-- Inventory Menu Card -->
+    <div class="menu-card" id="group-inventory">
       <button class="menu-btn" onclick="toggleMenu('group-inventory')">
         Inventory
         <span class="toggle-icon"></span>
       </button>
     </div>
 
-    <div class="menu-group" id="group-arsip">
+    <!-- Arsip Menu Card -->
+    <div class="menu-card" id="group-arsip">
       <button class="menu-btn" onclick="toggleMenu('group-arsip')">
         Arsip
         <span class="toggle-icon"></span>
@@ -368,26 +365,21 @@
   </div>
 
   <script>
-    // Fungsi untuk membuka / menutup submenu (Accordion)
     function toggleMenu(groupId) {
       const targetGroup = document.getElementById(groupId);
       targetGroup.classList.toggle('open');
     }
 
-    // Fungsi untuk berpindah Tab dengan Efek Fade Animasi
     function switchTab(tabId) {
       const contents = document.querySelectorAll('.tab-content');
       const buttons = document.querySelectorAll('.tab-btn');
 
-      // 1. Sembunyikan semua tab content
       contents.forEach(content => {
         content.classList.remove('active');
       });
 
-      // 2. Nonaktifkan semua button tab
       buttons.forEach(btn => btn.classList.remove('active'));
 
-      // 3. Tampilkan tab yang dipilih setelah sedikit delay agar animasi smooth
       const targetContent = document.getElementById('tab-' + tabId);
       if (targetContent) {
         setTimeout(() => {
@@ -395,7 +387,6 @@
         }, 50);
       }
 
-      // 4. Aktifkan tombol tab terkait
       const targetBtn = document.getElementById('btn-' + tabId);
       if (targetBtn) {
         targetBtn.classList.add('active');
