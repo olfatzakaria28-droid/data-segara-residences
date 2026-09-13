@@ -180,11 +180,12 @@
       overflow: hidden;
     }
 
-    /* Header Tabs */
+    /* Header Tabs Dynamic */
     .tabs-header {
       display: flex;
       gap: 12px;
       padding-left: 15px;
+      min-height: 38px;
     }
 
     .tab-btn {
@@ -237,7 +238,7 @@
       transform: translateY(0);
     }
 
-    /* Dashboard Widgets/Cards Grid */
+    /* Dashboard Widgets Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -319,62 +320,62 @@
       </div>
     </div>
 
-    <!-- Home Menu Card (Default Open) -->
+    <!-- Home Menu Card -->
     <div class="menu-card open" id="group-home">
-      <button class="menu-btn" onclick="toggleMenu('group-home')">
+      <button class="menu-btn" onclick="selectMainMenu('home')">
         Home
         <span class="toggle-icon"></span>
       </button>
       <div class="submenu-wrapper">
         <div class="submenu">
-          <a onclick="switchTab('dashboard')">Dashboard</a>
-          <a onclick="switchTab('pekerjaan-pending')">Pekerjaan Pending</a>
-          <a onclick="switchTab('rekap-material')">Rekap Material</a>
-          <a onclick="switchTab('anggota')">Anggota</a>
+          <a onclick="switchTab('home', 'dashboard')">Dashboard</a>
+          <a onclick="switchTab('home', 'pekerjaan-pending')">Pekerjaan Pending</a>
+          <a onclick="switchTab('home', 'rekap-material')">Rekap Material</a>
+          <a onclick="switchTab('home', 'anggota')">Anggota</a>
         </div>
       </div>
     </div>
 
     <!-- Pekerjaan Menu Card -->
     <div class="menu-card" id="group-pekerjaan">
-      <button class="menu-btn" onclick="toggleMenu('group-pekerjaan')">
+      <button class="menu-btn" onclick="selectMainMenu('pekerjaan')">
         Pekerjaan
         <span class="toggle-icon"></span>
       </button>
       <div class="submenu-wrapper">
         <div class="submenu">
-          <a onclick="switchTab('proyek-aktif')">Proyek Aktif</a>
-          <a onclick="switchTab('jadwal-pekerjaan')">Jadwal Pekerjaan</a>
-          <a onclick="switchTab('riwayat-proyek')">Riwayat Proyek</a>
+          <a onclick="switchTab('pekerjaan', 'proyek-aktif')">Proyek Aktif</a>
+          <a onclick="switchTab('pekerjaan', 'jadwal-pekerjaan')">Jadwal Pekerjaan</a>
+          <a onclick="switchTab('pekerjaan', 'riwayat-proyek')">Riwayat Proyek</a>
         </div>
       </div>
     </div>
 
     <!-- Inventory Menu Card -->
     <div class="menu-card" id="group-inventory">
-      <button class="menu-btn" onclick="toggleMenu('group-inventory')">
+      <button class="menu-btn" onclick="selectMainMenu('inventory')">
         Inventory
         <span class="toggle-icon"></span>
       </button>
       <div class="submenu-wrapper">
         <div class="submenu">
-          <a onclick="switchTab('stok-barang')">Stok Barang</a>
-          <a onclick="switchTab('pembelian-material')">Pembelian Material</a>
-          <a onclick="switchTab('alat-kerja')">Daftar Alat Kerja</a>
+          <a onclick="switchTab('inventory', 'stok-barang')">Stok Barang</a>
+          <a onclick="switchTab('inventory', 'pembelian-material')">Pembelian Material</a>
+          <a onclick="switchTab('inventory', 'alat-kerja')">Daftar Alat Kerja</a>
         </div>
       </div>
     </div>
 
     <!-- Arsip Menu Card -->
     <div class="menu-card" id="group-arsip">
-      <button class="menu-btn" onclick="toggleMenu('group-arsip')">
+      <button class="menu-btn" onclick="selectMainMenu('arsip')">
         Arsip
         <span class="toggle-icon"></span>
       </button>
       <div class="submenu-wrapper">
         <div class="submenu">
-          <a onclick="switchTab('dokumen-laporan')">Laporan Bulanan</a>
-          <a onclick="switchTab('arsip-kontrak')">Arsip Kontrak</a>
+          <a onclick="switchTab('arsip', 'dokumen-laporan')">Laporan Bulanan</a>
+          <a onclick="switchTab('arsip', 'arsip-kontrak')">Arsip Kontrak</a>
         </div>
       </div>
     </div>
@@ -382,252 +383,226 @@
 
   <!-- Main Area -->
   <div class="main-container">
-    <!-- Header Tabs -->
-    <div class="tabs-header">
-      <button class="tab-btn active" id="btn-dashboard" onclick="switchTab('dashboard')">Dashboard</button>
-      <button class="tab-btn" id="btn-rekap-material" onclick="switchTab('rekap-material')">Rekap Material</button>
-      <button class="tab-btn" id="btn-anggota" onclick="switchTab('anggota')">Anggota</button>
-    </div>
+    <!-- Header Tabs (Diisi secara Otomatis via JS) -->
+    <div class="tabs-header" id="dynamic-tabs"></div>
 
     <!-- Inner Content Container -->
     <div class="content-box">
-      
-      <!-- TAB 1: DASHBOARD -->
-      <div id="tab-dashboard" class="tab-content active">
+      <!-- HOME TABS -->
+      <div id="tab-dashboard" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 5px;">Dashboard Utama</h2>
         <p style="color: #666; margin-bottom: 20px;">Ringkasan aktivitas dan status operasional terbaru.</p>
-
-        <!-- Stats Grid -->
         <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Pekerjaan Pending</h3>
-            <div class="value">5</div>
-          </div>
-          <div class="stat-card">
-            <h3>Proyek Aktif</h3>
-            <div class="value">12</div>
-          </div>
-          <div class="stat-card">
-            <h3>Total Anggota</h3>
-            <div class="value">24</div>
-          </div>
-          <div class="stat-card">
-            <h3>Stok Material</h3>
-            <div class="value">148 Pcs</div>
-          </div>
+          <div class="stat-card"><h3>Pekerjaan Pending</h3><div class="value">5</div></div>
+          <div class="stat-card"><h3>Proyek Aktif</h3><div class="value">12</div></div>
+          <div class="stat-card"><h3>Total Anggota</h3><div class="value">24</div></div>
+          <div class="stat-card"><h3>Stok Material</h3><div class="value">148 Pcs</div></div>
         </div>
-
         <h3 style="color: #333; margin-top: 15px;">Pekerjaan Terbaru</h3>
         <table>
           <thead>
-            <tr>
-              <th>ID Pekerjaan</th>
-              <th>Nama Pekerjaan</th>
-              <th>Penanggung Jawab</th>
-              <th>Status</th>
-            </tr>
+            <tr><th>ID Pekerjaan</th><th>Nama Pekerjaan</th><th>Penanggung Jawab</th><th>Status</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td>PRJ-001</td>
-              <td>Instalasi Jaringan Gedung A</td>
-              <td>Budi Santoso</td>
-              <td><span class="badge badge-warning">Pending</span></td>
-            </tr>
-            <tr>
-              <td>PRJ-002</td>
-              <td>Maintenance Server Utama</td>
-              <td>Siti Rahma</td>
-              <td><span class="badge badge-info">Dalam Proses</span></td>
-            </tr>
-            <tr>
-              <td>PRJ-003</td>
-              <td>Pengadaan AC & Vent</td>
-              <td>Ahmad Rizky</td>
-              <td><span class="badge badge-success">Selesai</span></td>
-            </tr>
+            <tr><td>PRJ-001</td><td>Instalasi Jaringan Gedung A</td><td>Budi Santoso</td><td><span class="badge badge-warning">Pending</span></td></tr>
+            <tr><td>PRJ-002</td><td>Maintenance Server Utama</td><td>Siti Rahma</td><td><span class="badge badge-info">Dalam Proses</span></td></tr>
+            <tr><td>PRJ-003</td><td>Pengadaan AC & Vent</td><td>Ahmad Rizky</td><td><span class="badge badge-success">Selesai</span></td></tr>
           </tbody>
         </table>
       </div>
 
-      <!-- TAB 2: PEKERJAAN PENDING -->
       <div id="tab-pekerjaan-pending" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Pekerjaan Pending</h2>
         <table>
           <thead>
-            <tr>
-              <th>No</th>
-              <th>Pekerjaan</th>
-              <th>Lokasi</th>
-              <th>Prioritas</th>
-              <th>Status</th>
-            </tr>
+            <tr><th>No</th><th>Pekerjaan</th><th>Lokasi</th><th>Prioritas</th><th>Status</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Perbaikan Panel Listrik</td>
-              <td>Lantai 2</td>
-              <td>Tinggi</td>
-              <td><span class="badge badge-warning">Pending</span></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Perapian Kabel Data</td>
-              <td>Ruang Server</td>
-              <td>Sedang</td>
-              <td><span class="badge badge-warning">Pending</span></td>
-            </tr>
+            <tr><td>1</td><td>Perbaikan Panel Listrik</td><td>Lantai 2</td><td>Tinggi</td><td><span class="badge badge-warning">Pending</span></td></tr>
+            <tr><td>2</td><td>Perapian Kabel Data</td><td>Ruang Server</td><td>Sedang</td><td><span class="badge badge-warning">Pending</span></td></tr>
           </tbody>
         </table>
       </div>
 
-      <!-- TAB 3: REKAP MATERIAL -->
       <div id="tab-rekap-material" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Rekapitulasi Material</h2>
         <table>
           <thead>
-            <tr>
-              <th>Nama Material</th>
-              <th>Jumlah Terpakai</th>
-              <th>Sisa Stok</th>
-              <th>Satuan</th>
-            </tr>
+            <tr><th>Nama Material</th><th>Jumlah Terpakai</th><th>Sisa Stok</th><th>Satuan</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Kabel UTP Cat6</td>
-              <td>150</td>
-              <td>50</td>
-              <td>Meter</td>
-            </tr>
-            <tr>
-              <td>Pipe PVC 1/2 inch</td>
-              <td>40</td>
-              <td>20</td>
-              <td>Batang</td>
-            </tr>
-            <tr>
-              <td>Stop Kontak 4 Lubang</td>
-              <td>12</td>
-              <td>8</td>
-              <td>Pcs</td>
-            </tr>
+            <tr><td>Kabel UTP Cat6</td><td>150</td><td>50</td><td>Meter</td></tr>
+            <tr><td>Pipe PVC 1/2 inch</td><td>40</td><td>20</td><td>Batang</td></tr>
           </tbody>
         </table>
       </div>
 
-      <!-- TAB 4: ANGGOTA -->
       <div id="tab-anggota" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Anggota Tim</h2>
         <table>
           <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nama Anggota</th>
-              <th>Jabatan</th>
-              <th>Kontak</th>
-            </tr>
+            <tr><th>ID</th><th>Nama Anggota</th><th>Jabatan</th><th>Kontak</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td>EMP-01</td>
-              <td>Mohamad Olfat</td>
-              <td>Lead Technician</td>
-              <td>0812-3456-7890</td>
-            </tr>
-            <tr>
-              <td>EMP-02</td>
-              <td>Budi Santoso</td>
-              <td>Technician</td>
-              <td>0812-9876-5432</td>
-            </tr>
-            <tr>
-              <td>EMP-03</td>
-              <td>Siti Rahma</td>
-              <td>Admin Logistics</td>
-              <td>0813-1122-3344</td>
-            </tr>
+            <tr><td>EMP-01</td><td>Mohamad Olfat</td><td>Lead Technician</td><td>0812-3456-7890</td></tr>
+            <tr><td>EMP-02</td><td>Budi Santoso</td><td>Technician</td><td>0812-9876-5432</td></tr>
           </tbody>
         </table>
       </div>
 
-      <!-- TAB 5: PROYEK AKTIF -->
+      <!-- PEKERJAAN TABS -->
       <div id="tab-proyek-aktif" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Proyek Aktif</h2>
         <p>Halaman ini menampilkan seluruh proyek yang sedang berjalan saat ini.</p>
       </div>
 
-      <!-- TAB 6: JADWAL PEKERJAAN -->
       <div id="tab-jadwal-pekerjaan" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Jadwal Pekerjaan</h2>
         <p>Jadwal operasional tim lapangan minggu ini.</p>
       </div>
 
-      <!-- TAB 7: RIWAYAT PROYEK -->
       <div id="tab-riwayat-proyek" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Riwayat Proyek</h2>
         <p>Arsip proyek-proyek yang telah terselesaikan dengan baik.</p>
       </div>
 
-      <!-- TAB 8: STOK BARANG -->
+      <!-- INVENTORY TABS -->
       <div id="tab-stok-barang" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Stok Barang & Inventory</h2>
         <p>Rincian lengkap ketersediaan barang di gudang.</p>
       </div>
 
-      <!-- TAB 9: PEMBELIAN MATERIAL -->
       <div id="tab-pembelian-material" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Pembelian Material</h2>
         <p>Catatan pengadaan barang dan klaim nota pembelian.</p>
       </div>
 
-      <!-- TAB 10: ALAT KERJA -->
       <div id="tab-alat-kerja" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Alat Kerja</h2>
-        <p>Daftar perataan dan inventarisasi peralatan teknisi.</p>
+        <p>Daftar peralatan teknisi.</p>
       </div>
 
-      <!-- TAB 11: DOKUMEN LAPORAN -->
+      <!-- ARSIP TABS -->
       <div id="tab-dokumen-laporan" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Laporan Bulanan</h2>
         <p>Kumpulan dokumen rekapitulasi laporan bulanan.</p>
       </div>
 
-      <!-- TAB 12: ARSIP KONTRAK -->
       <div id="tab-arsip-kontrak" class="tab-content">
         <h2 style="color: #0099e5; margin-bottom: 15px;">Arsip Kontrak</h2>
         <p>Kumpulan dokumen legal dan kerja sama pihak ketiga.</p>
       </div>
-
     </div>
   </div>
 
   <script>
-    function toggleMenu(groupId) {
-      const targetGroup = document.getElementById(groupId);
-      targetGroup.classList.toggle('open');
+    // Pemetaan struktur menu dan sub-menunya
+    const menuStructure = {
+      home: {
+        title: "Home",
+        items: [
+          { id: "dashboard", label: "Dashboard" },
+          { id: "pekerjaan-pending", label: "Pekerjaan Pending" },
+          { id: "rekap-material", label: "Rekap Material" },
+          { id: "anggota", label: "Anggota" }
+        ]
+      },
+      pekerjaan: {
+        title: "Pekerjaan",
+        items: [
+          { id: "proyek-aktif", label: "Proyek Aktif" },
+          { id: "jadwal-pekerjaan", label: "Jadwal Pekerjaan" },
+          { id: "riwayat-proyek", label: "Riwayat Proyek" }
+        ]
+      },
+      inventory: {
+        title: "Inventory",
+        items: [
+          { id: "stok-barang", label: "Stok Barang" },
+          { id: "pembelian-material", label: "Pembelian Material" },
+          { id: "alat-kerja", label: "Daftar Alat Kerja" }
+        ]
+      },
+      arsip: {
+        title: "Arsip",
+        items: [
+          { id: "dokumen-laporan", label: "Laporan Bulanan" },
+          { id: "arsip-kontrak", label: "Arsip Kontrak" }
+        ]
+      }
+    };
+
+    let currentMenuKey = "home";
+
+    // Fungsi ketika Menu Utama diklik
+    function selectMainMenu(menuKey) {
+      currentMenuKey = menuKey;
+
+      // Reset accordion sidebar
+      document.querySelectorAll('.menu-card').forEach(card => card.classList.remove('open'));
+      const activeCard = document.getElementById('group-' + menuKey);
+      if (activeCard) activeCard.classList.add('open');
+
+      // Generasi ulang Tab Header sesuai menu yang aktif
+      renderHeaderTabs(menuKey);
+
+      // Otomatis buka sub-menu pertama dari menu tersebut
+      const defaultSubTabId = menuStructure[menuKey].items[0].id;
+      switchTab(menuKey, defaultSubTabId);
     }
 
-    function switchTab(tabId) {
-      const contents = document.querySelectorAll('.tab-content');
-      const buttons = document.querySelectorAll('.tab-btn');
+    // Fungsi Render Tab Header Dinamis
+    function renderHeaderTabs(menuKey) {
+      const tabsContainer = document.getElementById('dynamic-tabs');
+      tabsContainer.innerHTML = '';
 
-      contents.forEach(content => content.classList.remove('active'));
-      buttons.forEach(btn => btn.classList.remove('active'));
+      const items = menuStructure[menuKey].items;
+      items.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn';
+        btn.id = 'btn-' + item.id;
+        btn.innerText = item.label;
+        btn.onclick = () => switchTab(menuKey, item.id);
+        tabsContainer.appendChild(btn);
+      });
+    }
 
-      const targetContent = document.getElementById('tab-' + tabId);
+    // Fungsi Berpindah Tab Sub-Menu
+    function switchTab(menuKey, subTabId) {
+      // Pastikan menu utama terbuka jika link dipanggil langsung
+      if (currentMenuKey !== menuKey) {
+        currentMenuKey = menuKey;
+        document.querySelectorAll('.menu-card').forEach(card => card.classList.remove('open'));
+        const activeCard = document.getElementById('group-' + menuKey);
+        if (activeCard) activeCard.classList.add('open');
+        renderHeaderTabs(menuKey);
+      }
+
+      // Hide semua konten tab
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      // Nonaktifkan kelas active di semua tab header
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+      // Tampilkan konten tab terpilih
+      const targetContent = document.getElementById('tab-' + subTabId);
       if (targetContent) {
         setTimeout(() => {
           targetContent.classList.add('active');
-        }, 50);
+        }, 30);
       }
 
-      const targetBtn = document.getElementById('btn-' + tabId);
+      // Set kelas active pada tab header yang sesuai
+      const targetBtn = document.getElementById('btn-' + subTabId);
       if (targetBtn) {
         targetBtn.classList.add('active');
       }
     }
+
+    // Inisialisasi awal saat pertama kali dibuka
+    window.onload = function() {
+      selectMainMenu('home');
+    };
   </script>
 </body>
 </html>
