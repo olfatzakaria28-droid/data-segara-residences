@@ -80,22 +80,25 @@
       border-color: #0099e5;
     }
 
-    .btn-login {
-      width: 100%;
-      padding: 12px;
+    .btn-action {
+      padding: 12px 20px;
       background: #0099e5;
       color: #fff;
       border: none;
       border-radius: 10px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
       cursor: pointer;
       transition: background 0.3s ease;
-      margin-top: 10px;
     }
 
-    .btn-login:hover {
+    .btn-action:hover {
       background: #0077b5;
+    }
+
+    .btn-login {
+      width: 100%;
+      margin-top: 10px;
     }
 
     .error-msg {
@@ -107,8 +110,8 @@
 
     .spinner {
       display: inline-block;
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       border: 3px solid rgba(255,255,255,.3);
       border-radius: 50%;
       border-top-color: #fff;
@@ -119,7 +122,7 @@
       to { transform: rotate(360deg); }
     }
 
-    /* --- STYLES DASHBOARD (UTAMA) --- */
+    /* --- STYLES DASHBOARD --- */
     .app-container {
       display: flex;
       height: 100vh;
@@ -164,10 +167,7 @@
       text-transform: uppercase;
     }
 
-    .profile-info {
-      flex: 1;
-    }
-
+    .profile-info { flex: 1; }
     .profile-info .name {
       font-weight: bold;
       font-size: 14px;
@@ -193,12 +193,9 @@
       font-weight: bold;
       cursor: pointer;
       margin-top: auto;
-      transition: background 0.2s;
     }
 
-    .btn-logout:hover {
-      background: #cc0000;
-    }
+    .btn-logout:hover { background: #cc0000; }
 
     .menu-card {
       background: #ffffff;
@@ -318,27 +315,25 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 25px;
-    }
-
-    .stat-card {
-      background: #f8fbfe;
-      border: 2px solid #e0f2fe;
+    .form-container {
+      max-width: 500px;
+      background: #f9fafb;
+      padding: 20px 25px;
       border-radius: 15px;
-      padding: 20px;
-      text-align: center;
+      border: 1px solid #e5e7eb;
+      margin-top: 15px;
     }
 
-    .stat-card h3 { font-size: 14px; color: #666; margin-bottom: 8px; }
-    .stat-card .value { font-size: 28px; font-weight: bold; color: #0099e5; }
+    .alert {
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      margin-bottom: 15px;
+      display: none;
+    }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; font-size: 14px; }
-    th { background-color: #0099e5; color: white; }
+    .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
   </style>
 </head>
 <body>
@@ -359,7 +354,7 @@
         <input type="password" id="password" placeholder="Masukkan Password" />
       </div>
 
-      <button class="btn-login" id="btnLogin" onclick="processLogin()">Masuk</button>
+      <button class="btn-action btn-login" id="btnLogin" onclick="processLogin()">Masuk</button>
       <div class="error-msg" id="errorMsg">Username atau Password salah!</div>
     </div>
   </div>
@@ -420,7 +415,7 @@
         </div>
       </div>
 
-      <!-- Arsip Menu (Hanya Admin) -->
+      <!-- Arsip Menu -->
       <div class="menu-card role-admin-only" id="group-arsip">
         <button class="menu-btn" onclick="selectMainMenu('arsip')">
           Arsip <span class="toggle-icon"></span>
@@ -454,79 +449,72 @@
       <div class="tabs-header" id="dynamic-tabs"></div>
 
       <div class="content-box">
-        <!-- HOME TABS -->
+        <!-- TAB CONTENTS -->
         <div id="tab-dashboard" class="tab-content">
           <h2 style="color: #0099e5; margin-bottom: 5px;">Dashboard Utama</h2>
-          <p style="color: #666; margin-bottom: 20px;">Selamat datang di panel sistem operasional.</p>
-          <div class="stats-grid">
-            <div class="stat-card"><h3>Pekerjaan Pending</h3><div class="value">5</div></div>
-            <div class="stat-card"><h3>Proyek Aktif</h3><div class="value">12</div></div>
-            <div class="stat-card"><h3>Total Anggota</h3><div class="value">24</div></div>
-            <div class="stat-card"><h3>Stok Material</h3><div class="value">148 Pcs</div></div>
+          <p style="color: #666;">Selamat datang di panel sistem operasional.</p>
+        </div>
+
+        <div id="tab-pekerjaan-pending" class="tab-content"><h2>Pekerjaan Pending</h2></div>
+        <div id="tab-rekap-material" class="tab-content"><h2>Rekap Material</h2></div>
+        <div id="tab-anggota" class="tab-content"><h2>Daftar Anggota</h2></div>
+        <div id="tab-proyek-aktif" class="tab-content"><h2>Proyek Aktif</h2></div>
+        <div id="tab-jadwal-pekerjaan" class="tab-content"><h2>Jadwal Pekerjaan</h2></div>
+        <div id="tab-riwayat-proyek" class="tab-content"><h2>Riwayat Proyek</h2></div>
+        <div id="tab-stok-barang" class="tab-content"><h2>Stok Barang</h2></div>
+        <div id="tab-pembelian-material" class="tab-content"><h2>Pembelian Material</h2></div>
+        <div id="tab-alat-kerja" class="tab-content"><h2>Daftar Alat Kerja</h2></div>
+        <div id="tab-dokumen-laporan" class="tab-content"><h2>Laporan Bulanan</h2></div>
+        <div id="tab-arsip-kontrak" class="tab-content"><h2>Arsip Kontrak</h2></div>
+
+        <!-- TAB PENGATURAN: PROFIL SAYA -->
+        <div id="tab-profil-saya" class="tab-content">
+          <h2 style="color: #0099e5;">Profil Saya</h2>
+          <p style="color: #666; font-size: 14px;">Perbarui nama lengkap dan username Anda di bawah ini.</p>
+          
+          <div class="form-container">
+            <div id="profileAlert" class="alert"></div>
+
+            <div class="input-group">
+              <label>Nama Lengkap</label>
+              <input type="text" id="editNamaLengkap" placeholder="Nama Lengkap" />
+            </div>
+
+            <div class="input-group">
+              <label>Username</label>
+              <input type="text" id="editUsername" placeholder="Username Baru" />
+            </div>
+
+            <button class="btn-action" id="btnSaveProfile" onclick="saveProfile()">Simpan Perubahan</button>
           </div>
         </div>
 
-        <div id="tab-pekerjaan-pending" class="tab-content">
-          <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Pekerjaan Pending</h2>
-          <p>Daftar tugas pending yang membutuhkan tindakan segera.</p>
-        </div>
-
-        <div id="tab-rekap-material" class="tab-content">
-          <h2 style="color: #0099e5; margin-bottom: 15px;">Rekapitulasi Material</h2>
-          <p>Rincian penggunaan material proyek.</p>
-        </div>
-
-        <div id="tab-anggota" class="tab-content">
-          <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Anggota Tim</h2>
-          <p>Informasi seluruh anggota tim aktif.</p>
-        </div>
-
-        <!-- PEKERJAAN TABS -->
-        <div id="tab-proyek-aktif" class="tab-content">
-          <h2 style="color: #0099e5;">Daftar Proyek Aktif</h2>
-          <p style="margin-top:10px;">Informasi proyek yang sedang dikerjakan.</p>
-        </div>
-        <div id="tab-jadwal-pekerjaan" class="tab-content">
-          <h2 style="color: #0099e5;">Jadwal Pekerjaan</h2>
-          <p style="margin-top:10px;">Jadwal tugas harian dan mingguan.</p>
-        </div>
-        <div id="tab-riwayat-proyek" class="tab-content">
-          <h2 style="color: #0099e5;">Riwayat Proyek</h2>
-          <p style="margin-top:10px;">Dokumentasi proyek selesai.</p>
-        </div>
-
-        <!-- INVENTORY TABS -->
-        <div id="tab-stok-barang" class="tab-content">
-          <h2 style="color: #0099e5;">Stok Barang</h2>
-          <p style="margin-top:10px;">Jumlah ketersediaan barang.</p>
-        </div>
-        <div id="tab-pembelian-material" class="tab-content">
-          <h2 style="color: #0099e5;">Pembelian Material</h2>
-          <p style="margin-top:10px;">Riwayat transaksi material.</p>
-        </div>
-        <div id="tab-alat-kerja" class="tab-content">
-          <h2 style="color: #0099e5;">Daftar Alat Kerja</h2>
-          <p style="margin-top:10px;">Inventaris alat kerja teknisi.</p>
-        </div>
-
-        <!-- ARSIP TABS -->
-        <div id="tab-dokumen-laporan" class="tab-content">
-          <h2 style="color: #0099e5;">Laporan Bulanan</h2>
-          <p style="margin-top:10px;">Dokumen arsip laporan.</p>
-        </div>
-        <div id="tab-arsip-kontrak" class="tab-content">
-          <h2 style="color: #0099e5;">Arsip Kontrak</h2>
-          <p style="margin-top:10px;">Berkas kerja sama dan kontrak.</p>
-        </div>
-
-        <!-- PENGATURAN TABS -->
-        <div id="tab-profil-saya" class="tab-content">
-          <h2 style="color: #0099e5; margin-bottom: 15px;">Profil Saya</h2>
-          <p>Halaman kelola informasi dan detail akun penguna.</p>
-        </div>
+        <!-- TAB PENGATURAN: GANTI PASSWORD -->
         <div id="tab-ganti-password" class="tab-content">
-          <h2 style="color: #0099e5; margin-bottom: 15px;">Ganti Password</h2>
-          <p>Halaman perbarui kata sandi akun.</p>
+          <h2 style="color: #0099e5;">Ganti Password</h2>
+          <p style="color: #666; font-size: 14px;">Perbarui kata sandi akun Anda untuk keamanan.</p>
+
+          <div class="form-container">
+            <div id="passAlert" class="alert"></div>
+
+            <div class="input-group">
+              <label>Password Saat Ini</label>
+              <input type="password" id="oldPassword" placeholder="Masukkan Password Lama" />
+            </div>
+
+            <div class="input-group">
+              <label>Password Baru</label>
+              <input type="password" id="newPassword" placeholder="Masukkan Password Baru" />
+            </div>
+
+            <div class="input-group">
+              <label>Konfirmasi Password Baru</label>
+
+              <input type="password" id="confirmPassword" placeholder="Ulangi Password Baru" />
+            </div>
+
+            <button class="btn-action" id="btnSavePassword" onclick="savePassword()">Ubah Password</button>
+          </div>
         </div>
 
       </div>
@@ -534,51 +522,19 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycb.../exec"; 
+    // MASUKKAN WEB APP URL GOOGLE APPS SCRIPT ANDA DI SINI
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycb.../exec";
 
     const menuStructure = {
-      home: {
-        title: "Home",
-        items: [
-          { id: "dashboard", label: "Dashboard" },
-          { id: "pekerjaan-pending", label: "Pekerjaan Pending" },
-          { id: "rekap-material", label: "Rekap Material" },
-          { id: "anggota", label: "Anggota" }
-        ]
-      },
-      pekerjaan: {
-        title: "Pekerjaan",
-        items: [
-          { id: "proyek-aktif", label: "Proyek Aktif" },
-          { id: "jadwal-pekerjaan", label: "Jadwal Pekerjaan" },
-          { id: "riwayat-proyek", label: "Riwayat Proyek" }
-        ]
-      },
-      inventory: {
-        title: "Inventory",
-        items: [
-          { id: "stok-barang", label: "Stok Barang" },
-          { id: "pembelian-material", label: "Pembelian Material" },
-          { id: "alat-kerja", label: "Daftar Alat Kerja" }
-        ]
-      },
-      arsip: {
-        title: "Arsip",
-        items: [
-          { id: "dokumen-laporan", label: "Laporan Bulanan" },
-          { id: "arsip-kontrak", label: "Arsip Kontrak" }
-        ]
-      },
-      pengaturan: {
-        title: "Pengaturan",
-        items: [
-          { id: "profil-saya", label: "Profil Saya" },
-          { id: "ganti-password", label: "Ganti Password" }
-        ]
-      }
+      home: { title: "Home", items: [ { id: "dashboard", label: "Dashboard" }, { id: "pekerjaan-pending", label: "Pekerjaan Pending" }, { id: "rekap-material", label: "Rekap Material" }, { id: "anggota", label: "Anggota" } ] },
+      pekerjaan: { title: "Pekerjaan", items: [ { id: "proyek-aktif", label: "Proyek Aktif" }, { id: "jadwal-pekerjaan", label: "Jadwal Pekerjaan" }, { id: "riwayat-proyek", label: "Riwayat Proyek" } ] },
+      inventory: { title: "Inventory", items: [ { id: "stok-barang", label: "Stok Barang" }, { id: "pembelian-material", label: "Pembelian Material" }, { id: "alat-kerja", label: "Daftar Alat Kerja" } ] },
+      arsip: { title: "Arsip", items: [ { id: "dokumen-laporan", label: "Laporan Bulanan" }, { id: "arsip-kontrak", label: "Arsip Kontrak" } ] },
+      pengaturan: { title: "Pengaturan", items: [ { id: "profil-saya", label: "Profil Saya" }, { id: "ganti-password", label: "Ganti Password" } ] }
     };
 
     let currentMenuKey = "home";
+    let currentUser = null;
 
     async function processLogin() {
       const uInput = document.getElementById("username").value.trim();
@@ -601,12 +557,13 @@
         const result = await response.json();
 
         if (result.status === "success") {
-          const userData = {
+          currentUser = {
             nama: result.nama,
+            username: result.username,
             role: result.role.toLowerCase()
           };
-          localStorage.setItem("user_session", JSON.stringify(userData));
-          showDashboard(userData);
+          localStorage.setItem("user_session", JSON.stringify(currentUser));
+          showDashboard(currentUser);
         } else {
           err.innerText = result.message || "Username atau Password salah!";
           err.style.display = "block";
@@ -621,12 +578,11 @@
     }
 
     function showDashboard(user) {
+      currentUser = user;
       document.getElementById("loginPage").style.display = "none";
       document.getElementById("appDashboard").style.display = "flex";
 
-      document.getElementById("userNameDisplay").innerText = user.nama;
-      document.getElementById("userRoleDisplay").innerText = user.role;
-      document.getElementById("userAvatar").innerText = user.nama.charAt(0);
+      updateProfileUI();
 
       const arsipMenu = document.querySelector(".role-admin-only");
       if (user.role !== "admin") {
@@ -636,6 +592,118 @@
       }
 
       selectMainMenu("home");
+    }
+
+    function updateProfileUI() {
+      document.getElementById("userNameDisplay").innerText = currentUser.nama;
+      document.getElementById("userRoleDisplay").innerText = currentUser.role;
+      document.getElementById("userAvatar").innerText = currentUser.nama.charAt(0);
+      
+      document.getElementById("editNamaLengkap").value = currentUser.nama;
+      document.getElementById("editUsername").value = currentUser.username;
+    }
+
+    // SIMPAN PERUBAHAN PROFIL (NAMA & USERNAME)
+    async function saveProfile() {
+      const newNama = document.getElementById("editNamaLengkap").value.trim();
+      const newUsername = document.getElementById("editUsername").value.trim();
+      const alertBox = document.getElementById("profileAlert");
+      const btn = document.getElementById("btnSaveProfile");
+
+      if (!newNama || !newUsername) {
+        showAlert(alertBox, "Nama Lengkap dan Username tidak boleh kosong!", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Menyimpan...`;
+
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "updateProfile",
+            oldUsername: currentUser.username,
+            newUsername: newUsername,
+            newNama: newNama
+          })
+        });
+
+        const res = await response.json();
+
+        if (res.status === "success") {
+          currentUser.nama = res.newNama;
+          currentUser.username = res.newUsername;
+          localStorage.setItem("user_session", JSON.stringify(currentUser));
+          
+          updateProfileUI();
+          showAlert(alertBox, "Profil berhasil disimpan ke Google Sheets!", "success");
+        } else {
+          showAlert(alertBox, res.message || "Gagal memperbarui profil.", "error");
+        }
+      } catch (err) {
+        showAlert(alertBox, "Terjadi kesalahan koneksi.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Simpan Perubahan";
+      }
+    }
+
+    // SIMPAN PERUBAHAN PASSWORD
+    async function savePassword() {
+      const oldPassword = document.getElementById("oldPassword").value.trim();
+      const newPassword = document.getElementById("newPassword").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+      const alertBox = document.getElementById("passAlert");
+      const btn = document.getElementById("btnSavePassword");
+
+      if (!oldPassword || !newPassword || !confirmPassword) {
+        showAlert(alertBox, "Harap isi semua bidang password!", "error");
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        showAlert(alertBox, "Password baru dan konfirmasi password tidak cocok!", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Memproses...`;
+
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "changePassword",
+            username: currentUser.username,
+            oldPassword: oldPassword,
+            newPassword: newPassword
+          })
+        });
+
+        const res = await response.json();
+
+        if (res.status === "success") {
+          showAlert(alertBox, "Password berhasil diperbarui!", "success");
+          document.getElementById("oldPassword").value = "";
+          document.getElementById("newPassword").value = "";
+          document.getElementById("confirmPassword").value = "";
+        } else {
+          showAlert(alertBox, res.message || "Gagal mengubah password.", "error");
+        }
+      } catch (err) {
+        showAlert(alertBox, "Terjadi kesalahan koneksi.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Ubah Password";
+      }
+    }
+
+    function showAlert(element, message, type) {
+      element.innerText = message;
+      element.className = `alert alert-${type === "success" ? "success" : "error"}`;
+      element.style.display = "block";
+      setTimeout(() => { element.style.display = "none"; }, 4000);
     }
 
     function logout() {
