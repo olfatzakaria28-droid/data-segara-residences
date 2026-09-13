@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Admin</title>
+  <title>Dashboard System</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,13 +13,119 @@
     }
 
     body {
-      display: flex;
-      height: 100vh;
       background-color: #f4f6f9;
+      height: 100vh;
       overflow: hidden;
     }
 
-    /* Sidebar Style */
+    /* --- STYLES HALAMAN LOGIN --- */
+    .login-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #0099e5, #005691);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .login-card {
+      background: #ffffff;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .login-card h2 {
+      color: #0099e5;
+      margin-bottom: 8px;
+    }
+
+    .login-card p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .input-group input:focus {
+      border-color: #0099e5;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: #0099e5;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .btn-login:hover {
+      background: #0077b5;
+    }
+
+    .error-msg {
+      color: #e74c3c;
+      font-size: 13px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* --- STYLES DASHBOARD (UTAMA) --- */
+    .app-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
     .sidebar {
       width: 280px;
       background-color: #0099e5;
@@ -32,7 +138,6 @@
       overflow-y: auto;
     }
 
-    /* Profile Card */
     .profile-card {
       background: #ffffff;
       color: #0099e5;
@@ -41,13 +146,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 10px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .profile-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      margin-bottom: 5px;
     }
 
     .avatar {
@@ -59,35 +158,55 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: bold;
       border: 2px solid #0099e5;
+      text-transform: uppercase;
+    }
+
+    .profile-info {
+      flex: 1;
     }
 
     .profile-info .name {
       font-weight: bold;
       font-size: 14px;
+      color: #0099e5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
     }
 
     .profile-info .role {
-      font-size: 12px;
+      font-size: 11px;
       color: #666;
+      text-transform: capitalize;
     }
 
-    /* Container Menu Card */
+    .btn-logout {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: auto;
+      transition: background 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: #cc0000;
+    }
+
     .menu-card {
       background: #ffffff;
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      transition: box-shadow 0.3s ease, transform 0.2s ease;
     }
 
-    .menu-card:hover {
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Main Menu Button */
     .menu-btn {
       width: 100%;
       background: #ffffff;
@@ -100,11 +219,8 @@
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
-      text-align: left;
-      outline: none;
     }
 
-    /* Toggle Switch Indicator */
     .toggle-icon {
       width: 38px;
       height: 20px;
@@ -123,19 +239,12 @@
       height: 14px;
       background: #fff;
       border-radius: 50%;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
     }
 
-    .menu-card.open .toggle-icon {
-      background-color: #0099e5;
-    }
+    .menu-card.open .toggle-icon { background-color: #0099e5; }
+    .menu-card.open .toggle-icon::after { transform: translateX(18px); }
 
-    .menu-card.open .toggle-icon::after {
-      transform: translateX(18px);
-    }
-
-    /* Submenu Wrapper & Accordion Animation */
     .submenu-wrapper {
       max-height: 0;
       overflow: hidden;
@@ -163,15 +272,10 @@
       padding: 8px 10px;
       border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.2s ease, transform 0.2s ease;
     }
 
-    .submenu a:hover, .submenu a.active-link {
-      background-color: #e6f5fc;
-      transform: translateX(4px);
-    }
+    .submenu a:hover { background-color: #e6f5fc; }
 
-    /* Main Content Area */
     .main-container {
       flex: 1;
       padding: 25px 35px;
@@ -180,7 +284,6 @@
       overflow: hidden;
     }
 
-    /* Header Tabs Dynamic */
     .tabs-header {
       display: flex;
       gap: 12px;
@@ -199,21 +302,10 @@
       font-size: 14px;
       cursor: pointer;
       opacity: 0.6;
-      transform: translateY(4px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
-    .tab-btn:hover {
-      opacity: 0.85;
-      transform: translateY(1px);
-    }
+    .tab-btn.active { opacity: 1; }
 
-    .tab-btn.active {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Content Box Container */
     .content-box {
       flex: 1;
       border: 3px solid #0099e5;
@@ -221,24 +313,11 @@
       background-color: #fff;
       padding: 25px;
       overflow-y: auto;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
 
-    /* Content Animation */
-    .tab-content {
-      display: none;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-    .tab-content.active {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Dashboard Widgets Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -252,251 +331,189 @@
       border-radius: 15px;
       padding: 20px;
       text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .stat-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0, 153, 229, 0.15);
-    }
+    .stat-card h3 { font-size: 14px; color: #666; margin-bottom: 8px; }
+    .stat-card .value { font-size: 28px; font-weight: bold; color: #0099e5; }
 
-    .stat-card h3 {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 8px;
-    }
-
-    .stat-card .value {
-      font-size: 28px;
-      font-weight: bold;
-      color: #0099e5;
-    }
-
-    /* Tables Styling */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-
-    th, td {
-      border: 1px solid #e2e8f0;
-      padding: 12px;
-      text-align: left;
-      font-size: 14px;
-    }
-
-    th {
-      background-color: #0099e5;
-      color: white;
-    }
-
-    tr:hover {
-      background-color: #f0f9ff;
-    }
-
-    /* Status Badge Styling */
-    .badge {
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .badge-warning { background: #fef3c7; color: #d97706; }
-    .badge-success { background: #dcfce7; color: #15803d; }
-    .badge-info { background: #e0f2fe; color: #0369a1; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; font-size: 14px; }
+    th { background-color: #0099e5; color: white; }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="profile-card">
-      <div class="avatar">A</div>
-      <div class="profile-info">
-        <div class="name">Administrator</div>
-        <div class="role">Admin</div>
+  <!-- ================= HALAMAN LOGIN ================= -->
+  <div class="login-wrapper" id="loginPage">
+    <div class="login-card">
+      <h2>Selamat Datang</h2>
+      <p>Silakan masuk dengan akun Anda</p>
+      
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="username" placeholder="Masukkan Username" />
       </div>
-    </div>
 
-    <!-- Home Menu Card -->
-    <div class="menu-card open" id="group-home">
-      <button class="menu-btn" onclick="selectMainMenu('home')">
-        Home
-        <span class="toggle-icon"></span>
-      </button>
-      <div class="submenu-wrapper">
-        <div class="submenu">
-          <a onclick="switchTab('home', 'dashboard')">Dashboard</a>
-          <a onclick="switchTab('home', 'pekerjaan-pending')">Pekerjaan Pending</a>
-          <a onclick="switchTab('home', 'rekap-material')">Rekap Material</a>
-          <a onclick="switchTab('home', 'anggota')">Anggota</a>
-        </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Masukkan Password" />
       </div>
-    </div>
 
-    <!-- Pekerjaan Menu Card -->
-    <div class="menu-card" id="group-pekerjaan">
-      <button class="menu-btn" onclick="selectMainMenu('pekerjaan')">
-        Pekerjaan
-        <span class="toggle-icon"></span>
-      </button>
-      <div class="submenu-wrapper">
-        <div class="submenu">
-          <a onclick="switchTab('pekerjaan', 'proyek-aktif')">Proyek Aktif</a>
-          <a onclick="switchTab('pekerjaan', 'jadwal-pekerjaan')">Jadwal Pekerjaan</a>
-          <a onclick="switchTab('pekerjaan', 'riwayat-proyek')">Riwayat Proyek</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Inventory Menu Card -->
-    <div class="menu-card" id="group-inventory">
-      <button class="menu-btn" onclick="selectMainMenu('inventory')">
-        Inventory
-        <span class="toggle-icon"></span>
-      </button>
-      <div class="submenu-wrapper">
-        <div class="submenu">
-          <a onclick="switchTab('inventory', 'stok-barang')">Stok Barang</a>
-          <a onclick="switchTab('inventory', 'pembelian-material')">Pembelian Material</a>
-          <a onclick="switchTab('inventory', 'alat-kerja')">Daftar Alat Kerja</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Arsip Menu Card -->
-    <div class="menu-card" id="group-arsip">
-      <button class="menu-btn" onclick="selectMainMenu('arsip')">
-        Arsip
-        <span class="toggle-icon"></span>
-      </button>
-      <div class="submenu-wrapper">
-        <div class="submenu">
-          <a onclick="switchTab('arsip', 'dokumen-laporan')">Laporan Bulanan</a>
-          <a onclick="switchTab('arsip', 'arsip-kontrak')">Arsip Kontrak</a>
-        </div>
-      </div>
+      <button class="btn-login" id="btnLogin" onclick="processLogin()">Masuk</button>
+      <div class="error-msg" id="errorMsg">Username atau Password salah!</div>
     </div>
   </div>
 
-  <!-- Main Area -->
-  <div class="main-container">
-    <!-- Header Tabs (Diisi secara Otomatis via JS) -->
-    <div class="tabs-header" id="dynamic-tabs"></div>
-
-    <!-- Inner Content Container -->
-    <div class="content-box">
-      <!-- HOME TABS -->
-      <div id="tab-dashboard" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 5px;">Dashboard Utama</h2>
-        <p style="color: #666; margin-bottom: 20px;">Ringkasan aktivitas dan status operasional terbaru.</p>
-        <div class="stats-grid">
-          <div class="stat-card"><h3>Pekerjaan Pending</h3><div class="value">5</div></div>
-          <div class="stat-card"><h3>Proyek Aktif</h3><div class="value">12</div></div>
-          <div class="stat-card"><h3>Total Anggota</h3><div class="value">24</div></div>
-          <div class="stat-card"><h3>Stok Material</h3><div class="value">148 Pcs</div></div>
+  <!-- ================= APP DASHBOARD UTAMA ================= -->
+  <div class="app-container" id="appDashboard" style="display: none;">
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="profile-card">
+        <div class="avatar" id="userAvatar">A</div>
+        <div class="profile-info">
+          <div class="name" id="userNameDisplay">Nama User</div>
+          <div class="role" id="userRoleDisplay">Role</div>
         </div>
-        <h3 style="color: #333; margin-top: 15px;">Pekerjaan Terbaru</h3>
-        <table>
-          <thead>
-            <tr><th>ID Pekerjaan</th><th>Nama Pekerjaan</th><th>Penanggung Jawab</th><th>Status</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>PRJ-001</td><td>Instalasi Jaringan Gedung A</td><td>Budi Santoso</td><td><span class="badge badge-warning">Pending</span></td></tr>
-            <tr><td>PRJ-002</td><td>Maintenance Server Utama</td><td>Siti Rahma</td><td><span class="badge badge-info">Dalam Proses</span></td></tr>
-            <tr><td>PRJ-003</td><td>Pengadaan AC & Vent</td><td>Ahmad Rizky</td><td><span class="badge badge-success">Selesai</span></td></tr>
-          </tbody>
-        </table>
       </div>
 
-      <div id="tab-pekerjaan-pending" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Pekerjaan Pending</h2>
-        <table>
-          <thead>
-            <tr><th>No</th><th>Pekerjaan</th><th>Lokasi</th><th>Prioritas</th><th>Status</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>1</td><td>Perbaikan Panel Listrik</td><td>Lantai 2</td><td>Tinggi</td><td><span class="badge badge-warning">Pending</span></td></tr>
-            <tr><td>2</td><td>Perapian Kabel Data</td><td>Ruang Server</td><td>Sedang</td><td><span class="badge badge-warning">Pending</span></td></tr>
-          </tbody>
-        </table>
+      <!-- Home Menu -->
+      <div class="menu-card open" id="group-home">
+        <button class="menu-btn" onclick="selectMainMenu('home')">
+          Home <span class="toggle-icon"></span>
+        </button>
+        <div class="submenu-wrapper">
+          <div class="submenu">
+            <a onclick="switchTab('home', 'dashboard')">Dashboard</a>
+            <a onclick="switchTab('home', 'pekerjaan-pending')">Pekerjaan Pending</a>
+            <a onclick="switchTab('home', 'rekap-material')">Rekap Material</a>
+            <a onclick="switchTab('home', 'anggota')">Anggota</a>
+          </div>
+        </div>
       </div>
 
-      <div id="tab-rekap-material" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Rekapitulasi Material</h2>
-        <table>
-          <thead>
-            <tr><th>Nama Material</th><th>Jumlah Terpakai</th><th>Sisa Stok</th><th>Satuan</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Kabel UTP Cat6</td><td>150</td><td>50</td><td>Meter</td></tr>
-            <tr><td>Pipe PVC 1/2 inch</td><td>40</td><td>20</td><td>Batang</td></tr>
-          </tbody>
-        </table>
+      <!-- Pekerjaan Menu -->
+      <div class="menu-card" id="group-pekerjaan">
+        <button class="menu-btn" onclick="selectMainMenu('pekerjaan')">
+          Pekerjaan <span class="toggle-icon"></span>
+        </button>
+        <div class="submenu-wrapper">
+          <div class="submenu">
+            <a onclick="switchTab('pekerjaan', 'proyek-aktif')">Proyek Aktif</a>
+            <a onclick="switchTab('pekerjaan', 'jadwal-pekerjaan')">Jadwal Pekerjaan</a>
+            <a onclick="switchTab('pekerjaan', 'riwayat-proyek')">Riwayat Proyek</a>
+          </div>
+        </div>
       </div>
 
-      <div id="tab-anggota" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Anggota Tim</h2>
-        <table>
-          <thead>
-            <tr><th>ID</th><th>Nama Anggota</th><th>Jabatan</th><th>Kontak</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>EMP-01</td><td>Mohamad Olfat</td><td>Lead Technician</td><td>0812-3456-7890</td></tr>
-            <tr><td>EMP-02</td><td>Budi Santoso</td><td>Technician</td><td>0812-9876-5432</td></tr>
-          </tbody>
-        </table>
+      <!-- Inventory Menu -->
+      <div class="menu-card" id="group-inventory">
+        <button class="menu-btn" onclick="selectMainMenu('inventory')">
+          Inventory <span class="toggle-icon"></span>
+        </button>
+        <div class="submenu-wrapper">
+          <div class="submenu">
+            <a onclick="switchTab('inventory', 'stok-barang')">Stok Barang</a>
+            <a onclick="switchTab('inventory', 'pembelian-material')">Pembelian Material</a>
+            <a onclick="switchTab('inventory', 'alat-kerja')">Daftar Alat Kerja</a>
+          </div>
+        </div>
       </div>
 
-      <!-- PEKERJAAN TABS -->
-      <div id="tab-proyek-aktif" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Proyek Aktif</h2>
-        <p>Halaman ini menampilkan seluruh proyek yang sedang berjalan saat ini.</p>
+      <!-- Arsip Menu (Hanya Admin) -->
+      <div class="menu-card role-admin-only" id="group-arsip">
+        <button class="menu-btn" onclick="selectMainMenu('arsip')">
+          Arsip <span class="toggle-icon"></span>
+        </button>
+        <div class="submenu-wrapper">
+          <div class="submenu">
+            <a onclick="switchTab('arsip', 'dokumen-laporan')">Laporan Bulanan</a>
+            <a onclick="switchTab('arsip', 'arsip-kontrak')">Arsip Kontrak</a>
+          </div>
+        </div>
       </div>
 
-      <div id="tab-jadwal-pekerjaan" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Jadwal Pekerjaan</h2>
-        <p>Jadwal operasional tim lapangan minggu ini.</p>
-      </div>
+      <button class="btn-logout" onclick="logout()">Keluar (Logout)</button>
+    </div>
 
-      <div id="tab-riwayat-proyek" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Riwayat Proyek</h2>
-        <p>Arsip proyek-proyek yang telah terselesaikan dengan baik.</p>
-      </div>
+    <!-- Main Content Area -->
+    <div class="main-container">
+      <div class="tabs-header" id="dynamic-tabs"></div>
 
-      <!-- INVENTORY TABS -->
-      <div id="tab-stok-barang" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Stok Barang & Inventory</h2>
-        <p>Rincian lengkap ketersediaan barang di gudang.</p>
-      </div>
+      <div class="content-box">
+        <!-- HOME TABS -->
+        <div id="tab-dashboard" class="tab-content">
+          <h2 style="color: #0099e5; margin-bottom: 5px;">Dashboard Utama</h2>
+          <p style="color: #666; margin-bottom: 20px;">Selamat datang di panel sistem operasional.</p>
+          <div class="stats-grid">
+            <div class="stat-card"><h3>Pekerjaan Pending</h3><div class="value">5</div></div>
+            <div class="stat-card"><h3>Proyek Aktif</h3><div class="value">12</div></div>
+            <div class="stat-card"><h3>Total Anggota</h3><div class="value">24</div></div>
+            <div class="stat-card"><h3>Stok Material</h3><div class="value">148 Pcs</div></div>
+          </div>
+        </div>
 
-      <div id="tab-pembelian-material" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Pembelian Material</h2>
-        <p>Catatan pengadaan barang dan klaim nota pembelian.</p>
-      </div>
+        <div id="tab-pekerjaan-pending" class="tab-content">
+          <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Pekerjaan Pending</h2>
+          <p>Daftar tugas pending yang membutuhkan tindakan segera.</p>
+        </div>
 
-      <div id="tab-alat-kerja" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Alat Kerja</h2>
-        <p>Daftar peralatan teknisi.</p>
-      </div>
+        <div id="tab-rekap-material" class="tab-content">
+          <h2 style="color: #0099e5; margin-bottom: 15px;">Rekapitulasi Material</h2>
+          <p>Rincian penggunaan material proyek.</p>
+        </div>
 
-      <!-- ARSIP TABS -->
-      <div id="tab-dokumen-laporan" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Laporan Bulanan</h2>
-        <p>Kumpulan dokumen rekapitulasi laporan bulanan.</p>
-      </div>
+        <div id="tab-anggota" class="tab-content">
+          <h2 style="color: #0099e5; margin-bottom: 15px;">Daftar Anggota Tim</h2>
+          <p>Informasi seluruh anggota tim aktif.</p>
+        </div>
 
-      <div id="tab-arsip-kontrak" class="tab-content">
-        <h2 style="color: #0099e5; margin-bottom: 15px;">Arsip Kontrak</h2>
-        <p>Kumpulan dokumen legal dan kerja sama pihak ketiga.</p>
+        <!-- PEKERJAAN TABS -->
+        <div id="tab-proyek-aktif" class="tab-content">
+          <h2 style="color: #0099e5;">Daftar Proyek Aktif</h2>
+          <p style="margin-top:10px;">Informasi proyek yang sedang dikerjakan.</p>
+        </div>
+        <div id="tab-jadwal-pekerjaan" class="tab-content">
+          <h2 style="color: #0099e5;">Jadwal Pekerjaan</h2>
+          <p style="margin-top:10px;">Jadwal tugas harian dan mingguan.</p>
+        </div>
+        <div id="tab-riwayat-proyek" class="tab-content">
+          <h2 style="color: #0099e5;">Riwayat Proyek</h2>
+          <p style="margin-top:10px;">Dokumentasi proyek selesai.</p>
+        </div>
+
+        <!-- INVENTORY TABS -->
+        <div id="tab-stok-barang" class="tab-content">
+          <h2 style="color: #0099e5;">Stok Barang</h2>
+          <p style="margin-top:10px;">Jumlah ketersediaan barang.</p>
+        </div>
+        <div id="tab-pembelian-material" class="tab-content">
+          <h2 style="color: #0099e5;">Pembelian Material</h2>
+          <p style="margin-top:10px;">Riwayat transaksi material.</p>
+        </div>
+        <div id="tab-alat-kerja" class="tab-content">
+          <h2 style="color: #0099e5;">Daftar Alat Kerja</h2>
+          <p style="margin-top:10px;">Inventaris alat kerja teknisi.</p>
+        </div>
+
+        <!-- ARSIP TABS -->
+        <div id="tab-dokumen-laporan" class="tab-content">
+          <h2 style="color: #0099e5;">Laporan Bulanan</h2>
+          <p style="margin-top:10px;">Dokumen arsip laporan.</p>
+        </div>
+        <div id="tab-arsip-kontrak" class="tab-content">
+          <h2 style="color: #0099e5;">Arsip Kontrak</h2>
+          <p style="margin-top:10px;">Berkas kerja sama dan kontrak.</p>
+        </div>
+
       </div>
     </div>
   </div>
 
   <script>
-    // Pemetaan struktur menu dan sub-menunya
+    // MASUKKAN WEB APP URL DARI GOOGLE APPS SCRIPT DI SINI:
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJL15YV8HHAiKFrEH773m2q1uCWbcaxa9bK1JUqGLDPMFlpdspYdlm81I4myNw3LM/exec"; 
+
     const menuStructure = {
       home: {
         title: "Home",
@@ -534,24 +551,93 @@
 
     let currentMenuKey = "home";
 
-    // Fungsi ketika Menu Utama diklik
+    // FUNGSI PROSES LOGIN REALTIME KE GOOGLE SHEETS
+    async function processLogin() {
+      const uInput = document.getElementById("username").value.trim();
+      const pInput = document.getElementById("password").value.trim();
+      const btn = document.getElementById("btnLogin");
+      const err = document.getElementById("errorMsg");
+
+      if (!uInput || !pInput) {
+        err.innerText = "Isi username dan password!";
+        err.style.display = "block";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Memeriksa...`;
+      err.style.display = "none";
+
+      try {
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?username=${encodeURIComponent(uInput)}&password=${encodeURIComponent(pInput)}`);
+        const result = await response.json();
+
+        if (result.status === "success") {
+          // Simpan sesi login di localStorage browser
+          const userData = {
+            nama: result.nama,
+            role: result.role.toLowerCase()
+          };
+          localStorage.setItem("user_session", JSON.stringify(userData));
+
+          // Masuk ke Dashboard
+          showDashboard(userData);
+        } else {
+          err.innerText = result.message || "Username atau Password salah!";
+          err.style.display = "block";
+        }
+      } catch (e) {
+        err.innerText = "Gagal terhubung ke Google Sheets!";
+        err.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Masuk";
+      }
+    }
+
+    // TAMPILKAN DASHBOARD SESUAI HASIL LOGIN
+    function showDashboard(user) {
+      document.getElementById("loginPage").style.display = "none";
+      document.getElementById("appDashboard").style.display = "flex";
+
+      // Set Informasi Profil
+      document.getElementById("userNameDisplay").innerText = user.nama;
+      document.getElementById("userRoleDisplay").innerText = user.role;
+      document.getElementById("userAvatar").innerText = user.nama.charAt(0);
+
+      // Sembunyikan Menu Spesifik Berdasarkan Role
+      const arsipMenu = document.querySelector(".role-admin-only");
+      if (user.role !== "admin") {
+        if (arsipMenu) arsipMenu.style.display = "none";
+      } else {
+        if (arsipMenu) arsipMenu.style.display = "block";
+      }
+
+      selectMainMenu("home");
+    }
+
+    // LOGOUT
+    function logout() {
+      localStorage.removeItem("user_session");
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("appDashboard").style.display = "none";
+      document.getElementById("loginPage").style.display = "flex";
+    }
+
+    // NAVIGASI MENU UTAMA
     function selectMainMenu(menuKey) {
       currentMenuKey = menuKey;
-
-      // Reset accordion sidebar
       document.querySelectorAll('.menu-card').forEach(card => card.classList.remove('open'));
       const activeCard = document.getElementById('group-' + menuKey);
       if (activeCard) activeCard.classList.add('open');
 
-      // Generasi ulang Tab Header sesuai menu yang aktif
       renderHeaderTabs(menuKey);
-
-      // Otomatis buka sub-menu pertama dari menu tersebut
       const defaultSubTabId = menuStructure[menuKey].items[0].id;
       switchTab(menuKey, defaultSubTabId);
     }
 
-    // Fungsi Render Tab Header Dinamis
+    // RENDER HEADER TABS DYNAMIC
     function renderHeaderTabs(menuKey) {
       const tabsContainer = document.getElementById('dynamic-tabs');
       tabsContainer.innerHTML = '';
@@ -567,9 +653,8 @@
       });
     }
 
-    // Fungsi Berpindah Tab Sub-Menu
+    // SWITCH TAB SUBMENU
     function switchTab(menuKey, subTabId) {
-      // Pastikan menu utama terbuka jika link dipanggil langsung
       if (currentMenuKey !== menuKey) {
         currentMenuKey = menuKey;
         document.querySelectorAll('.menu-card').forEach(card => card.classList.remove('open'));
@@ -578,30 +663,24 @@
         renderHeaderTabs(menuKey);
       }
 
-      // Hide semua konten tab
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-      // Nonaktifkan kelas active di semua tab header
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-      // Tampilkan konten tab terpilih
       const targetContent = document.getElementById('tab-' + subTabId);
       if (targetContent) {
-        setTimeout(() => {
-          targetContent.classList.add('active');
-        }, 30);
+        setTimeout(() => { targetContent.classList.add('active'); }, 30);
       }
 
-      // Set kelas active pada tab header yang sesuai
       const targetBtn = document.getElementById('btn-' + subTabId);
-      if (targetBtn) {
-        targetBtn.classList.add('active');
-      }
+      if (targetBtn) { targetBtn.classList.add('active'); }
     }
 
-    // Inisialisasi awal saat pertama kali dibuka
+    // CEK SESI LOGIN SAAT BERKUNJUNG KEMBALI
     window.onload = function() {
-      selectMainMenu('home');
+      const savedUser = localStorage.getItem("user_session");
+      if (savedUser) {
+        showDashboard(JSON.parse(savedUser));
+      }
     };
   </script>
 </body>
