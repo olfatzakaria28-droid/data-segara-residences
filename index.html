@@ -16,12 +16,12 @@
 
     .input-group { margin-bottom: 18px; text-align: left; }
     .input-group label { display: block; font-size: 13px; font-weight: bold; color: #333; margin-bottom: 6px; }
-    .input-group input, .input-group select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; outline: none; font-size: 14px; transition: border-color 0.3s; background: #fff; }
-    .input-group input:focus, .input-group select:focus { border-color: #0099e5; }
+    .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; outline: none; font-size: 14px; transition: border-color 0.3s; background: #fff; }
+    .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: #0099e5; }
 
-    .btn-action { padding: 12px 20px; background: #0099e5; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; transition: background 0.3s ease; }
+    .btn-action { padding: 10px 20px; background: #0099e5; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; transition: background 0.3s ease; }
     .btn-action:hover { background: #0077b5; }
-    .btn-login { width: 100%; margin-top: 10px; }
+    .btn-login { width: 100%; margin-top: 10px; padding: 12px; font-size: 16px; }
     .error-msg { color: #e74c3c; font-size: 13px; margin-top: 15px; display: none; }
 
     .spinner { display: inline-block; width: 16px; height: 16px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
@@ -65,7 +65,7 @@
     .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
     .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 
-    /* INNER SUB-TABS STYLES */
+    /* INNER TABS & BUTTONS */
     .inner-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
     .inner-tab-btn { background: #e0f2fe; color: #0099e5; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.2s; }
     .inner-tab-btn.active { background: #0099e5; color: #fff; }
@@ -80,6 +80,18 @@
     .badge-stock { padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
     .badge-danger { background: #fee2e2; color: #991b1b; }
     .badge-normal { background: #dcfce7; color: #15803d; }
+
+    /* MODAL STYLES */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 99999; }
+    .modal-card { background: #fff; width: 100%; max-width: 550px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .modal-header h3 { color: #0099e5; }
+    .close-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #666; }
+    
+    .part-item-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .part-item-row select { flex: 1; }
+    .part-item-row input { width: 80px; }
+    .btn-remove-part { background: #fee2e2; color: #991b1b; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -123,7 +135,6 @@
         </div></div>
       </div>
 
-      <!-- PEKERJAAN MENU -->
       <div class="menu-card" id="group-pekerjaan">
         <button class="menu-btn" onclick="selectMainMenu('pekerjaan')">Pekerjaan <span class="toggle-icon"></span></button>
         <div class="submenu-wrapper"><div class="submenu">
@@ -176,6 +187,7 @@
         <div id="tab-pekerjaan-daily" class="tab-content">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h2 style="color: #0099e5;">Pekerjaan Daily</h2>
+            <button class="btn-action" onclick="openAddJobModal()">+ Tambah Pekerjaan</button>
           </div>
 
           <div class="inner-tabs">
@@ -185,7 +197,7 @@
           </div>
 
           <div id="shiftContentContainer">
-            <p style="color: #666; margin-top: 10px;">Menampilkan daftar pekerjaan untuk <b>Shift Pagi</b>.</p>
+            <p style="color: #666; margin-top: 10px;">Memuat riwayat pekerjaan daily...</p>
           </div>
         </div>
 
@@ -274,6 +286,62 @@
     </div>
   </div>
 
+  <!-- POP-UP MODAL FORM TAMBAH PEKERJAAN -->
+  <div class="modal-overlay" id="addJobModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Tambah Pekerjaan Daily</h3>
+        <button class="close-btn" onclick="closeAddJobModal()">&times;</button>
+      </div>
+
+      <div id="modalAlert" class="alert"></div>
+
+      <div class="input-group">
+        <label>Shift Pekerjaan</label>
+        <select id="jobShift">
+          <option value="Pagi">Shift Pagi</option>
+          <option value="Sore">Shift Sore</option>
+          <option value="Malam">Shift Malam</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Nama Teknisi</label>
+        <input type="text" id="jobNamaTeknisi" readonly style="background-color: #f3f4f6;" />
+      </div>
+
+      <div class="input-group">
+        <label>Lokasi Pekerjaan</label>
+        <input type="text" id="jobLokasi" placeholder="Contoh: Basement Tower A / Room 204" />
+      </div>
+
+      <div class="input-group">
+        <label>Masalah yang Terjadi</label>
+        <textarea id="jobMasalah" rows="3" placeholder="Jelaskan detail masalah atau pekerjaan..."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label>Pergantian Part / Sparepart?</label>
+        <select id="jobPergantianPart" onchange="togglePartSection()">
+          <option value="Tidak">Tidak</option>
+          <option value="Ya">Ya</option>
+        </select>
+      </div>
+
+      <!-- KONTEN RINCIAN PART (MUNCUL JIKA PERGANTIAN PART = YA) -->
+      <div id="partSection" style="display: none; background: #f9fafb; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 18px;">
+        <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 8px;">Daftar Sparepart yang Digunakan:</label>
+        <div id="partListContainer"></div>
+        <button class="btn-action" style="background: #10b981; padding: 6px 12px; font-size: 12px; margin-top: 5px;" onclick="addPartRow()">+ Tambah Part</button>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn-action" style="background: #6b7280;" onclick="closeAddJobModal()">Batal</button>
+        <button class="btn-action" id="btnSaveJob" onclick="submitDailyJob()">Simpan Pekerjaan</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycb.../exec";
 
@@ -291,7 +359,10 @@
     let currentMenuKey = "home";
     let currentUser = null;
     let cachedInventoryData = {};
+    let allInventoryItems = [];
     let activeInventorySheet = "ITEM ELEKTRIKAL";
+    let activeShiftFilter = "Pagi";
+    let dailyJobsList = [];
 
     async function processLogin() {
       const uInput = document.getElementById("username").value.trim();
@@ -354,8 +425,159 @@
       document.getElementById("cfgApiPassword").value = getApiPassword();
     }
 
-    // FUNGSI FILTER SHIFT UNTUK PEKERJAAN DAILY
+    /* MODAL TAMBAH PEKERJAAN FUNCTIONS */
+    async function openAddJobModal() {
+      document.getElementById("jobNamaTeknisi").value = currentUser ? currentUser.nama : "";
+      document.getElementById("jobShift").value = activeShiftFilter;
+      document.getElementById("jobLokasi").value = "";
+      document.getElementById("jobMasalah").value = "";
+      document.getElementById("jobPergantianPart").value = "Tidak";
+      document.getElementById("partListContainer").innerHTML = "";
+      togglePartSection();
+
+      document.getElementById("addJobModal").style.display = "flex";
+
+      // Muat daftar inventory jika belum ter-cache
+      if (allInventoryItems.length === 0) {
+        await loadInventoryData();
+      }
+    }
+
+    function closeAddJobModal() {
+      document.getElementById("addJobModal").style.display = "none";
+    }
+
+    function togglePartSection() {
+      const isPart = document.getElementById("jobPergantianPart").value;
+      const section = document.getElementById("partSection");
+      if (isPart === "Ya") {
+        section.style.display = "block";
+        if (document.querySelectorAll(".part-item-row").length === 0) {
+          addPartRow();
+        }
+      } else {
+        section.style.display = "none";
+      }
+    }
+
+    function addPartRow() {
+      const container = document.getElementById("partListContainer");
+      const rowDiv = document.createElement("div");
+      rowDiv.className = "part-item-row";
+
+      let selectHtml = `<select class="part-select"><option value="">-- Pilih Sparepart --</option>`;
+      allInventoryItems.forEach(item => {
+        selectHtml += `<option value="${item.barcode}" data-sheet="${item.sheetName}" data-nama="${item.nama}" data-satuan="${item.satuan}">[${item.sheetName}] ${item.barcode} - ${item.nama} (Stok: ${item.stokGudang})</option>`;
+      });
+      selectHtml += `</select>`;
+
+      rowDiv.innerHTML = `
+        ${selectHtml}
+        <input type="number" class="part-qty" min="1" value="1" placeholder="Qty" />
+        <button class="btn-remove-part" onclick="this.parentElement.remove()">Hapus</button>
+      `;
+
+      container.appendChild(rowDiv);
+    }
+
+    async function submitDailyJob() {
+      const shift = document.getElementById("jobShift").value;
+      const nama = document.getElementById("jobNamaTeknisi").value;
+      const lokasi = document.getElementById("jobLokasi").value.trim();
+      const masalah = document.getElementById("jobMasalah").value.trim();
+      const isPergantian = document.getElementById("jobPergantianPart").value;
+      const alertBox = document.getElementById("modalAlert");
+      const btn = document.getElementById("btnSaveJob");
+
+      if (!lokasi || !masalah) {
+        showAlert(alertBox, "Lokasi dan Masalah wajib diisi!", "error");
+        return;
+      }
+
+      let partsList = [];
+      if (isPergantian === "Ya") {
+        const rows = document.querySelectorAll(".part-item-row");
+        let valid = true;
+
+        rows.forEach(row => {
+          const select = row.querySelector(".part-select");
+          const qtyInput = row.querySelector(".part-qty");
+          const selectedOpt = select.options[select.selectedIndex];
+
+          if (!select.value || !qtyInput.value || Number(qtyInput.value) <= 0) {
+            valid = false;
+          } else {
+            partsList.push({
+              barcode: select.value,
+              sheetName: selectedOpt.getAttribute("data-sheet"),
+              namaBarang: selectedOpt.getAttribute("data-nama"),
+              satuan: selectedOpt.getAttribute("data-satuan") || "Pcs",
+              qty: Number(qtyInput.value)
+            });
+          }
+        });
+
+        if (!valid || partsList.length === 0) {
+          showAlert(alertBox, "Pilih sparepart dan isi Qty dengan benar!", "error");
+          return;
+        }
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Menyimpan...`;
+
+      try {
+        const formData = new URLSearchParams();
+        formData.append("action", "addDailyJob");
+        formData.append("shift", shift);
+        formData.append("nama", nama);
+        formData.append("lokasi", lokasi);
+        formData.append("masalah", masalah);
+        formData.append("isPergantian", isPergantian);
+        formData.append("partsList", JSON.stringify(partsList));
+        formData.append("api_password", getApiPassword());
+
+        const response = await fetch(getScriptUrl(), { method: "POST", body: formData });
+        const res = await response.json();
+
+        if (res.status === "success") {
+          closeAddJobModal();
+          await loadDailyJobs(); // Reload data pekerjaan
+          allInventoryItems = []; // Invalidate cache stok barang
+        } else {
+          showAlert(alertBox, res.message || "Gagal menyimpan pekerjaan.", "error");
+        }
+      } catch (err) {
+        showAlert(alertBox, "Terjadi kesalahan koneksi.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Simpan Pekerjaan";
+      }
+    }
+
+    /* LOAD & FILTER PEKERJAAN DAILY */
+    async function loadDailyJobs() {
+      const container = document.getElementById("shiftContentContainer");
+      container.innerHTML = `<p style="color: #0099e5;"><span class="spinner" style="border-top-color:#0099e5;"></span> Memuat daftar pekerjaan...</p>`;
+
+      try {
+        const url = `${getScriptUrl()}?action=getDailyJobs&api_password=${encodeURIComponent(getApiPassword())}`;
+        const response = await fetch(url);
+        const result = await response.json();
+
+        if (result.status === "success") {
+          dailyJobsList = result.data;
+          renderDailyJobsTable(activeShiftFilter);
+        } else {
+          container.innerHTML = `<p style="color: #e74c3c;">Gagal memuat pekerjaan: ${result.message}</p>`;
+        }
+      } catch (err) {
+        container.innerHTML = `<p style="color: #e74c3c;">Gagal terhubung ke Google Sheets API.</p>`;
+      }
+    }
+
     function filterShift(shiftName) {
+      activeShiftFilter = shiftName;
       document.getElementById("btn-shift-pagi").classList.remove("active");
       document.getElementById("btn-shift-sore").classList.remove("active");
       document.getElementById("btn-shift-malam").classList.remove("active");
@@ -364,11 +586,52 @@
       if (shiftName === 'Sore') document.getElementById("btn-shift-sore").classList.add("active");
       if (shiftName === 'Malam') document.getElementById("btn-shift-malam").classList.add("active");
 
-      const container = document.getElementById("shiftContentContainer");
-      container.innerHTML = `<p style="color: #666; margin-top: 10px;">Menampilkan daftar pekerjaan untuk <b>Shift ${shiftName}</b>.</p>`;
+      renderDailyJobsTable(shiftName);
     }
 
-    // FUNGSI LOAD STOK BARANG
+    function renderDailyJobsTable(shiftName) {
+      const container = document.getElementById("shiftContentContainer");
+      const filteredJobs = dailyJobsList.filter(j => String(j.shift).toLowerCase() === shiftName.toLowerCase());
+
+      if (filteredJobs.length === 0) {
+        container.innerHTML = `<p style="color: #666; margin-top: 10px;">Belum ada catatan pekerjaan untuk <b>Shift ${shiftName}</b>.</p>`;
+        return;
+      }
+
+      let html = `
+        <div style="overflow-x: auto; margin-top: 10px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Waktu & Tanggal</th>
+                <th>Teknisi</th>
+                <th>Lokasi</th>
+                <th>Masalah</th>
+                <th>Pergantian Part</th>
+                <th>Rincian Part</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      filteredJobs.forEach(job => {
+        html += `
+          <tr>
+            <td>${job.tanggal || '-'}</td>
+            <td><b>${job.nama || '-'}</b></td>
+            <td>${job.lokasi || '-'}</td>
+            <td>${job.masalah || '-'}</td>
+            <td>${job.pergantianPart === 'Ya' ? '<span class="badge-stock badge-danger">Ya</span>' : '<span class="badge-stock badge-normal">Tidak</span>'}</td>
+            <td>${job.rincianPart || '-'}</td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table></div>`;
+      container.innerHTML = html;
+    }
+
+    /* LOAD STOK BARANG */
     async function loadInventoryData() {
       const container = document.getElementById("inventoryContainer");
       container.innerHTML = `<p style="color: #0099e5;"><span class="spinner" style="border-top-color:#0099e5;"></span> Memuat data stok dari Google Sheets...</p>`;
@@ -380,6 +643,7 @@
 
         if (result.status === "success") {
           cachedInventoryData = result.data;
+          allInventoryItems = result.allItems || [];
           renderInventoryTable(activeInventorySheet);
         } else {
           container.innerHTML = `<p style="color: #e74c3c;">Gagal memuat data: ${result.message}</p>`;
@@ -662,6 +926,8 @@
           targetContent.classList.add('active'); 
           if (subTabId === 'stok-barang') {
             loadInventoryData();
+          } else if (subTabId === 'pekerjaan-daily') {
+            loadDailyJobs();
           }
         }, 30);
       }
